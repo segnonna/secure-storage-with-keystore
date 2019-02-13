@@ -1,6 +1,6 @@
 # Introduction
 
-##Securely (simple key-value) Storing Secrets in an Android Application
+## Securely (simple key-value) Storing Secrets in an Android Application
 
 A general rule for mobile development is you should not use any hardcoded keys because a hacker can easily
  decompile your code and obtain the key, thereby rendering the encryption useless. You need a key management framework,
@@ -19,8 +19,8 @@ With these, storing secrets becomes easy. All you have to do is:
     - When you want to read a secret, read the encrypted data from Preferences, get the key from KeyStore and then use the key to decrypt the data.
 
 For more information:
-[Android keystore system (https://developer.android.com/training/articles/keystore)]
-[Basic Android Keystore (https://github.com/googlesamples/android-BasicAndroidKeyStore)]
+    -[Android keystore system] (https://developer.android.com/training/articles/keystore)
+    -[Basic Android Keystore] (https://github.com/googlesamples/android-BasicAndroidKeyStore)
 
 # For Pre Android M, the library does follow things:
 
