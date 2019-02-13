@@ -22,22 +22,22 @@ For more information:
 [Android keystore system (https://developer.android.com/training/articles/keystore)]
 [Basic Android Keystore (https://github.com/googlesamples/android-BasicAndroidKeyStore)]
 
-#For Pre Android M, the library does follow things:
+# For Pre Android M, the library does follow things:
 
-##Key Generation
+## Key Generation
 
     * Generate a pair of RSA keys;
     * Generate a random AES key;
     * Encrypt the AES key using the RSA public key;
     * Store the encrypted AES key in Preferences.
 
-##Encrypting and Storing the data
+## Encrypting and Storing the data
 
     * Retrieve the encrypted AES key from Preferences;
     * Decrypt the above to obtain the AES key using the private RSA key;
     * Encrypt the data using the AES key;
 
-##Retrieving and decrypting the data
+## Retrieving and decrypting the data
 
     * Retrieve the encrypted AES key from Preferences;
     * Decrypt the above to obtain the AES key using the private RSA key;
@@ -62,7 +62,7 @@ dependencies {
 }
 ```
 
-#Simple Keystore
+# Simple Keystore
 
 To securely store your data,
 
