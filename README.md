@@ -18,6 +18,30 @@ With these, storing secrets becomes easy. All you have to do is:
     - When you want to store a secret, retrieve the key from KeyStore, encrypt the data with it, and then store the encrypted data in Preferences.
     - When you want to read a secret, read the encrypted data from Preferences, get the key from KeyStore and then use the key to decrypt the data.
 
+For more information:
+[Android keystore system (https://developer.android.com/training/articles/keystore)]
+[Basic Android Keystore (https://github.com/googlesamples/android-BasicAndroidKeyStore)]
+
+#For Pre Android M, the library does follow things:
+
+##Key Generation
+
+    * Generate a pair of RSA keys;
+    * Generate a random AES key;
+    * Encrypt the AES key using the RSA public key;
+    * Store the encrypted AES key in Preferences.
+
+##Encrypting and Storing the data
+
+    * Retrieve the encrypted AES key from Preferences;
+    * Decrypt the above to obtain the AES key using the private RSA key;
+    * Encrypt the data using the AES key;
+
+##Retrieving and decrypting the data
+
+    * Retrieve the encrypted AES key from Preferences;
+    * Decrypt the above to obtain the AES key using the private RSA key;
+    * Decrypt the data using the AES key
 
 
 In your project root build.gradle with:
