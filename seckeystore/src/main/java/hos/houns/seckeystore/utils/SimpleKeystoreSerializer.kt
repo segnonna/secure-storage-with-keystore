@@ -6,7 +6,7 @@ package hos.houns.seckeystore.utils
  */
 
 
-class SecureSharedPrefsSerializer : Serializer {
+class SimpleKeystoreSerializer : Serializer {
 
     override fun <T> serialize(cipherText: String, value: T): String {
 

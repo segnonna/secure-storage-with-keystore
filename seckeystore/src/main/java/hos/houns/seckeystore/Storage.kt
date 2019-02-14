@@ -7,9 +7,9 @@ package hos.houns.seckeystore
 
 interface Storage {
 
-    fun <T> put(key: String?, value: PreferenceStorage.SensitiveData<T>): Boolean
+    fun <T> put(key: String?, value: SimpleKeystore.SensitiveData<T>): Boolean
 
-    fun get(key: String?): PreferenceStorage.SensitiveData<*>
+    fun get(key: String?): SimpleKeystore.SensitiveData<*>
     fun getAll(): MutableMap<String, *>?
 
     fun delete(key: String?): Boolean

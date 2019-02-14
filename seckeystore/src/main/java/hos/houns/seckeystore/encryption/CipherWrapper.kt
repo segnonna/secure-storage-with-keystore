@@ -6,7 +6,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Base64
 import androidx.annotation.RequiresApi
-import hos.houns.seckeystore.PreferenceStorage
+import hos.houns.seckeystore.SimpleKeystore
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.security.*
@@ -39,7 +39,7 @@ class CipherWrapper(var context: Context) {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    // @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Throws(
         NoSuchPaddingException::class,
         NoSuchAlgorithmException::class,
@@ -81,7 +81,7 @@ class CipherWrapper(var context: Context) {
             }
         }
         val encodedBytes = cipher.doFinal(
-            PreferenceStorage(context).gsonParser.toJson(stringToEncrypt).toByteArray(
+                SimpleKeystore(context).gsonParser.toJson(stringToEncrypt).toByteArray(
                 charset(CHARSET_NAME)
             )
         )
@@ -134,7 +134,7 @@ class CipherWrapper(var context: Context) {
 
             val decodedBytes = cipher.doFinal(encryptedDecodedData)
 
-            return PreferenceStorage(context).gsonParser.fromJson(String(decodedBytes, StandardCharsets.UTF_8), type)
+            return SimpleKeystore(context).gsonParser.fromJson(String(decodedBytes, StandardCharsets.UTF_8), type)
 
 
         }

@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import hos.houns.seckeystore.encryption.CipherWrapper
 import hos.houns.seckeystore.utils.GsonParser
-import hos.houns.seckeystore.utils.SecureSharedPrefsSerializer
+import hos.houns.seckeystore.utils.SimpleKeystoreSerializer
 import timber.log.Timber
 import java.io.Serializable
 import java.util.*
@@ -13,7 +13,7 @@ import java.util.*
 /**
  * Stores application data like password hash.
  */
-class PreferenceStorage constructor(var context: Context) : Storage {
+class SimpleKeystore constructor(var context: Context) : Storage {
 
     private val STORAGE_SETTINGS: String = "settings"
     private val STORAGE_ENCRYPTION_KEY: String = "encryption_key"
@@ -23,7 +23,7 @@ class PreferenceStorage constructor(var context: Context) : Storage {
 
     private val gson: Gson by lazy(LazyThreadSafetyMode.NONE) { Gson() }
     internal val gsonParser: GsonParser by lazy(LazyThreadSafetyMode.NONE) { GsonParser(gson) }
-    val secureSharedPrefsSerializer: SecureSharedPrefsSerializer by lazy(LazyThreadSafetyMode.NONE) { SecureSharedPrefsSerializer() }
+    val simpleKeystoreSerializer: SimpleKeystoreSerializer by lazy(LazyThreadSafetyMode.NONE) { SimpleKeystoreSerializer() }
 
     data class SensitiveData<T>(
         val alias: String,
@@ -86,7 +86,7 @@ class PreferenceStorage constructor(var context: Context) : Storage {
     private fun <T> createSecretData(alias: String, secret: T, createDate: Date): SensitiveData<*> {
         val encryptedSecret = encryptSecret(secret)
         // val plaintext = secureSharedConverter.toString(secret)
-        val serialize = secureSharedPrefsSerializer.serialize(encryptedSecret, secret)
+        val serialize = simpleKeystoreSerializer.serialize(encryptedSecret, secret)
         //Timber.e("serialize : $plaintext")
         // Timber.e("serialize : $serialize")
         return SensitiveData(
@@ -113,9 +113,9 @@ class PreferenceStorage constructor(var context: Context) : Storage {
         val value = getSensitiveDataFromSharedPrefs(alias)
 
         val secretSerialized = value?.secret
-        val dataInfo = secureSharedPrefsSerializer.deserialize(secretSerialized as String)
+        val dataInfo = simpleKeystoreSerializer.deserialize(secretSerialized as String)
         //Timber.e(dataInfo.cipherText)
-        // Timber.e(dataInfo.keyClazz.name)
+        Timber.e(dataInfo.keyClazz.name)
         return CipherWrapper(context).decryptData(dataInfo.cipherText, dataInfo.keyClazz)
     }
 
