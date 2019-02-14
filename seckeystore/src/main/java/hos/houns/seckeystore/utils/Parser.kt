@@ -1,4 +1,4 @@
-package hos.houns.seckeystore
+package hos.houns.seckeystore.utils
 
 /**
  * Created by hospicehounsou on 28,June,2018

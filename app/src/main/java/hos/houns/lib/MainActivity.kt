@@ -19,8 +19,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         with(PreferenceStorage(this)) {
-            Timber.e(getSensitiveData("n7QHzGOUs2iDkNFZDU/HQ0sflqFh0HWCkqcV8I5kKMxU", kotlin.String::class.java))
-            Timber.e(getSensitiveData("jsyub+zGpmW2bU5pra54K3j1", kotlin.Int::class.java).toString())
+            Timber.e(getSensitiveData<String>("name"))
+            Timber.e(getSensitiveData<Int>("age").toString())
+            Timber.e(getSensitiveData<Date>("date")?.time.toString())
+
         }
     }
 }

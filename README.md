@@ -2,9 +2,18 @@
 
 ## Securely (simple key-value) Storing Secrets in an Android Application
 
+
+To store securely data on a device, you probably don't want to rely only on
+the separation of processes of the Android OS but make sure the stored values are also encrypted.
+
 A general rule for mobile development is you should not use any hardcoded keys because a hacker can easily
- decompile your code and obtain the key, thereby rendering the encryption useless. You need a key management framework,
- and that’s what the Android KeyStore API is designed for.
+decompile your code and obtain the key, thereby rendering the encryption useless. You need a key management framework,
+and that’s what the Android KeyStore API is designed for.
+
+To make it possible, i use the Android Keystore and the SharedPreferences.The keystore is used for generating cryptographic keys,
+ the values are then encrypted with these keys and subsequently
+  securely stored in the SharedPreferences.
+
 
 KeyStore provides two functions:
 
@@ -19,8 +28,8 @@ With these, storing secrets becomes easy. All you have to do is:
     - When you want to read a secret, read the encrypted data from Preferences, get the key from KeyStore and then use the key to decrypt the data.
 
 For more information:
-    -[Android keystore system] (https://developer.android.com/training/articles/keystore)
-    -[Basic Android Keystore] (https://github.com/googlesamples/android-BasicAndroidKeyStore)
+    -Android keystore system (https://developer.android.com/training/articles/keystore)
+    -Basic Android Keystore (https://github.com/googlesamples/android-BasicAndroidKeyStore)
 
 # For Pre Android M, the library does follow things:
 
@@ -81,8 +90,9 @@ To read secured data,
 
 ```
  with(PreferenceStorage(this)) {
-            Timber.e(getSensitiveData("n7QHzGOUs2iDkNFZDU/HQ0sflqFh0HWCkqcV8I5kKMxU", String::class.java))
-            Timber.e(getSensitiveData("jsyub+zGpmW2bU5pra54K3j1", Int::class.java).toString())
+            Timber.e(getSensitiveData<String>("name") )
+                      Timber.e(getSensitiveData<Int>("age").toString() )
+                       Timber.e(getSensitiveData<Date>("date")?.time.toString() )
 }
 
 ```

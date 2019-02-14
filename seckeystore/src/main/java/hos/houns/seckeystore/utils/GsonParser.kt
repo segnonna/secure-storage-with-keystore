@@ -1,4 +1,4 @@
-package hos.houns.seckeystore
+package hos.houns.seckeystore.utils
 
 import android.text.TextUtils
 
