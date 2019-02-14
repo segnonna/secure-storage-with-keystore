@@ -29,3 +29,8 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}

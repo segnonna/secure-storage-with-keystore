@@ -2,8 +2,6 @@ package hos.houns.lib
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import hos.houns.seckeystore.SimpleKeystore
-import timber.log.Timber
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -22,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         with(SimpleKeystore(this)) {
             Timber.e(getSensitiveData<String>("name"))
             Timber.e(getSensitiveData<Int>("age").toString())
-            Timber.e(getSensitiveData<Date>("date")?.time.toString())
+            Timber.e(getSensitiveData<Date>("date").time.toString())
             Timber.e(getSensitiveData<MutableList<String>>("list").toString())
 
         }

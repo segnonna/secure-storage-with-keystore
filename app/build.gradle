@@ -36,5 +36,8 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.2-alpha01'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.2-alpha01'
     api project(':seckeystore')
-    //api 'com.github.hounsouh:simplekeystore:1.3'
+    //api 'com.github.hounsouh:simplekeystore:0.0.1'
+}
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
