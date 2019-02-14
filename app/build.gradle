@@ -36,5 +36,5 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.2-alpha01'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.2-alpha01'
     api project(':seckeystore')
-    //api 'com.github.hounsouh:simplekeystore:1.0'
+    //api 'com.github.hounsouh:simplekeystore:1.3'
 }
