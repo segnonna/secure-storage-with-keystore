@@ -76,7 +76,7 @@ dependencies {
 To securely store your data,
 
 ```
-with(PreferenceStorage(this)) {
+with(SimpleKeystore(this)) {
             saveSensitiveData("name", "Hospice HOUNSOU")
             saveSensitiveData("age", 50)
             saveSensitiveData("date", Date())
@@ -89,7 +89,7 @@ In this exemple, name is stored in sharedPreferences as **n7QHzGOUs2iDkNFZDU/HQ0
 To read secured data,
 
 ```
- with(PreferenceStorage(this)) {
+ with(SimpleKeystore(this)) {
             Timber.e(getSensitiveData<String>("name") )
             Timber.e(getSensitiveData<Int>("age").toString() )
             Timber.e(getSensitiveData<Date>("date")?.time.toString() )
