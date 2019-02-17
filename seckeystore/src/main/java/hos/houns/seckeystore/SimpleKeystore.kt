@@ -113,10 +113,14 @@ class SimpleKeystore constructor(var context: Context) : Storage {
         val value = getSensitiveDataFromSharedPrefs(alias)
 
         val secretSerialized = value?.secret
-        val dataInfo = simpleKeystoreSerializer.deserialize(secretSerialized as String)
-        //Timber.e(dataInfo.cipherText)
-        Timber.e(dataInfo.keyClazz.name)
-        return CipherWrapper(context).decryptData(dataInfo.cipherText, dataInfo.keyClazz)
+        secretSerialized?.let {
+            val dataInfo = simpleKeystoreSerializer.deserialize(secretSerialized as String)
+            //Timber.e(dataInfo.cipherText)
+            Timber.e(dataInfo.keyClazz.name)
+
+            return CipherWrapper(context).decryptData(dataInfo.cipherText, dataInfo.keyClazz)
+        } ?: return null
+
     }
 
     override fun <T> put(key: String?, value: SensitiveData<T>): Boolean {
