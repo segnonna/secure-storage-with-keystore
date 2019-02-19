@@ -76,7 +76,7 @@ class SimpleKeystore constructor(var context: Context) : Storage {
         }
     }
 
-    fun removeSensitiveData(alias: String): Boolean = sensitiveDataPrefs.edit().remove(STORAGE_ENCRYPTION_KEY).commit()
+    fun removeSensitiveData(alias: String): Boolean = sensitiveDataPrefs.edit().remove(alias).commit()
 
     private fun getSensitiveDataFromSharedPrefs(alias: String): SensitiveData<*>? =
             gson.fromJson(sensitiveDataPrefs.getString(alias, "")!!, SensitiveData::class.java)
