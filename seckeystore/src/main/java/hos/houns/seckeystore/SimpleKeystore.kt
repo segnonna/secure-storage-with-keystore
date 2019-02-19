@@ -23,7 +23,7 @@ class SimpleKeystore constructor(var context: Context) : Storage {
 
     private val gson: Gson by lazy(LazyThreadSafetyMode.NONE) { Gson() }
     internal val gsonParser: GsonParser by lazy(LazyThreadSafetyMode.NONE) { GsonParser(gson) }
-    val simpleKeystoreSerializer: SimpleKeystoreSerializer by lazy(LazyThreadSafetyMode.NONE) { SimpleKeystoreSerializer() }
+    private val simpleKeystoreSerializer: SimpleKeystoreSerializer by lazy(LazyThreadSafetyMode.NONE) { SimpleKeystoreSerializer() }
 
     data class SensitiveData<T>(
         val alias: String,
@@ -38,11 +38,12 @@ class SimpleKeystore constructor(var context: Context) : Storage {
         sensitiveDataPrefs = context.getSharedPreferences(STORAGE_SECRETS, android.content.Context.MODE_PRIVATE)
     }
 
-    fun saveAesEncryptionKey(key: String): Boolean {
+    internal fun saveAesEncryptionKey(key: String): Boolean {
         return settings.edit().putString(STORAGE_ENCRYPTION_KEY, key).commit()
     }
-    fun getAesEncryptionKey(): String = settings.getString(STORAGE_ENCRYPTION_KEY, "")!!
-    fun removeAesEncryptionKey(): Boolean = settings.edit().remove(STORAGE_ENCRYPTION_KEY).commit()
+
+    internal fun getAesEncryptionKey(): String = settings.getString(STORAGE_ENCRYPTION_KEY, "")!!
+    internal fun removeAesEncryptionKey(): Boolean = settings.edit().remove(STORAGE_ENCRYPTION_KEY).commit()
 
     fun getSensitiveDatas(): List<SensitiveData<*>> {
         val secretsList = ArrayList<SensitiveData<*>>()
