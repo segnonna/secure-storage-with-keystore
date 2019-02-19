@@ -75,6 +75,8 @@ class SimpleKeystore constructor(var context: Context) : Storage {
         }
     }
 
+    fun removeSensitiveData(alias: String): Boolean = sensitiveDataPrefs.edit().remove(STORAGE_ENCRYPTION_KEY).commit()
+
     private fun getSensitiveDataFromSharedPrefs(alias: String): SensitiveData<*>? =
             gson.fromJson(sensitiveDataPrefs.getString(alias, "")!!, SensitiveData::class.java)
 
@@ -109,14 +111,14 @@ class SimpleKeystore constructor(var context: Context) : Storage {
      * Decrypt secret before showing it.
      */
     fun <T> getSensitiveData(alias: String): T? {
-        Timber.i("------- getSensitiveDataString")
+        //Timber.i("------- getSensitiveDataString")
         val value = getSensitiveDataFromSharedPrefs(alias)
 
         val secretSerialized = value?.secret
         secretSerialized?.let {
             val dataInfo = simpleKeystoreSerializer.deserialize(secretSerialized as String)
             //Timber.e(dataInfo.cipherText)
-            Timber.e(dataInfo.keyClazz.name)
+            // Timber.e(dataInfo.keyClazz.name)
 
             return CipherWrapper(context).decryptData(dataInfo.cipherText, dataInfo.keyClazz)
         } ?: return null

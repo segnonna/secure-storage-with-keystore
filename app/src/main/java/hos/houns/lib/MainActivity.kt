@@ -20,7 +20,10 @@ class MainActivity : AppCompatActivity() {
 
         with(SimpleKeystore(this)) {
             Timber.e("name: ${getSensitiveData<String>("name")}")
-            Timber.e("nameee: " + getSensitiveData<String>("namee"))
+            saveSensitiveData("name", "Morrrrrrr")
+            Timber.e("name: ${getSensitiveData<String>("name")}")
+            removeSensitiveData("name")
+            Timber.e("name: ${getSensitiveData<String>("name")}")
             //Timber.e(getSensitiveData<Int>("age").toString())
             //Timber.e(getSensitiveData<Date>("date")?.time.toString())
             //Timber.e(getSensitiveData<MutableList<String>>("list").toString())
