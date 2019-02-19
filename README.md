@@ -1,3 +1,4 @@
+[![](https://jitpack.io/v/hounsouh/simplekeystore.svg)](https://jitpack.io/#hounsouh/simplekeystore)
 # Introduction
 
 ## Securely (simple key-value) Storing Secrets in an Android Application
