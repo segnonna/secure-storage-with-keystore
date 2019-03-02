@@ -140,7 +140,6 @@ class CipherWrapper(var context: Context) {
 
             return SimpleKeystore(context).gsonParser.fromJson(String(decodedBytes, StandardCharsets.UTF_8), type)
 
-
         }
 
     }

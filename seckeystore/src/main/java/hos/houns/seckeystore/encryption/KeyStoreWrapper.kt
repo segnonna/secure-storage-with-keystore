@@ -51,7 +51,7 @@ class KeyStoreWrapper(private val context: Context) {
     private fun saveEncryptedKey() {
         with(mSimpleKeystore) {
             if (getAesEncryptionKey().isEmpty()) {
-                val key = ByteArray(16)
+                val key = ByteArray(256)
                 val secureRandom = SecureRandom()
                 secureRandom.nextBytes(key)
                 val encryptedKey = rsaEncryptKey(key)
@@ -78,7 +78,6 @@ class KeyStoreWrapper(private val context: Context) {
             )
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                // NOTE no Random IV. According to above this is less secure but acceptably so.
                 .setRandomizedEncryptionRequired(false)
                 .build()
         )
