@@ -1,5 +1,7 @@
 package hos.houns.seckeystore.utils
 
+import timber.log.Timber
+
 /**
  * Created by hospicehounsou on 28,June,2018
  * Dakar, Senegal.
@@ -58,10 +60,12 @@ class SimpleKeystoreSerializer : Serializer {
         val infos = serializedText.split(INFO_DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
         infos.forEach {
-            //  Timber.e("infos -> $it")
+            // Timber.e("infos -> $it")
         }
 
         val type = infos[2][0]
+
+        Timber.e("type -> $type")
 
         // if it is collection, no need to create the class object
         var keyClazz: Class<*>? = null

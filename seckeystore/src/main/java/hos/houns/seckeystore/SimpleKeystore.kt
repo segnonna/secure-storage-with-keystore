@@ -3,11 +3,13 @@ package hos.houns.seckeystore
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import com.orhanobut.hawk.Hawk
 import hos.houns.seckeystore.encryption.CipherWrapper
 import hos.houns.seckeystore.utils.GsonParser
 import hos.houns.seckeystore.utils.SimpleKeystoreSerializer
 import timber.log.Timber
 import java.io.Serializable
+import java.security.SecureRandom
 import java.util.*
 
 /**
@@ -34,6 +36,9 @@ class SimpleKeystore constructor(var context: Context) : Storage {
 
 
     init {
+        Hawk
+            .init(context)
+            .build()
         settings = context.getSharedPreferences(STORAGE_SETTINGS, android.content.Context.MODE_PRIVATE)
         sensitiveDataPrefs = context.getSharedPreferences(STORAGE_SECRETS, android.content.Context.MODE_PRIVATE)
     }
@@ -87,14 +92,16 @@ class SimpleKeystore constructor(var context: Context) : Storage {
 
 
     private fun <T> createSecretData(alias: String, secret: T, createDate: Date): SensitiveData<*> {
-        val encryptedSecret = encryptSecret(secret)
+        Hawk.put(alias, generateIV())
+        val encryptedSecret = encryptSecret(secret, alias)
         // val plaintext = secureSharedConverter.toString(secret)
         val serialize = simpleKeystoreSerializer.serialize(encryptedSecret, secret)
         //Timber.e("serialize : $plaintext")
         // Timber.e("serialize : $serialize")
+
         return SensitiveData(
-            alias.capitalize(),
-                serialize,
+            alias,
+            serialize,
             createDate,
             updateDate = Date()
         )
@@ -103,8 +110,8 @@ class SimpleKeystore constructor(var context: Context) : Storage {
     /**
      * Encrypt secret before saving it.
      */
-    private fun <T> encryptSecret(secret: T): String {
-        return CipherWrapper(context).encryptData(secret)
+    private fun <T> encryptSecret(secret: T, alias: String): String {
+        return CipherWrapper(context).encryptData(secret, alias)
     }
 
 
@@ -121,7 +128,7 @@ class SimpleKeystore constructor(var context: Context) : Storage {
             //Timber.e(dataInfo.cipherText)
             // Timber.e(dataInfo.keyClazz.name)
 
-            return CipherWrapper(context).decryptData(dataInfo.cipherText, dataInfo.keyClazz)
+            return CipherWrapper(context).decryptData(dataInfo.cipherText, value.alias, dataInfo.keyClazz)
         } ?: return null
 
     }
@@ -154,6 +161,14 @@ class SimpleKeystore constructor(var context: Context) : Storage {
 
     override fun contains(key: String?): Boolean {
         return sensitiveDataPrefs.contains(key)
+    }
+
+
+    private fun generateIV(): ByteArray {
+        val random = SecureRandom()
+        val bytes = ByteArray(12)
+        random.nextBytes(bytes)
+        return bytes
     }
 
 }

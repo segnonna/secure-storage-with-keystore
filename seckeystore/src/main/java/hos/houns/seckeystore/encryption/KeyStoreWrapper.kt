@@ -47,7 +47,7 @@ class KeyStoreWrapper(private val context: Context) {
         IOException::class
     )
 
-    // Generate Random AES KEY
+
     private fun saveEncryptedKey() {
         with(mSimpleKeystore) {
             if (getAesEncryptionKey().isEmpty()) {
@@ -98,6 +98,7 @@ class KeyStoreWrapper(private val context: Context) {
         InvalidKeyException::class,
         IOException::class
     )
+
     private fun generateKeysForAPILessThanM() {
         // Generate a key pair for encryption
         val start = Calendar.getInstance()

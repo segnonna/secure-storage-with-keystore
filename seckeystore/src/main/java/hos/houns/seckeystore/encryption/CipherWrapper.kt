@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Base64
 import androidx.annotation.RequiresApi
+import com.orhanobut.hawk.Hawk
 import hos.houns.seckeystore.SimpleKeystore
 import java.io.IOException
 import java.nio.charset.StandardCharsets
@@ -17,6 +18,7 @@ import javax.crypto.IllegalBlockSizeException
 import javax.crypto.NoSuchPaddingException
 import javax.crypto.spec.GCMParameterSpec
 
+
 @SuppressLint("GetInstance")
 class CipherWrapper(var context: Context) {
     private val CHARSET_NAME = "UTF-8"
@@ -25,9 +27,11 @@ class CipherWrapper(var context: Context) {
     private val AES_MODE_LESS_THAN_M = "AES/ECB/PKCS7Padding"
 
     // TODO update these bytes to be random for IV of encryption
-    private val FIXED_IV = byteArrayOf(55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44)
+    //private val FIXED_IV = byteArrayOf(55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44)
+
     private val CIPHER_PROVIDER_NAME_ENCRYPTION_DECRYPTION_AES = "BC"
     private var cipher: Cipher
+
 
     init {
         cipher = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -53,14 +57,14 @@ class CipherWrapper(var context: Context) {
         BadPaddingException::class,
         IllegalBlockSizeException::class
     )
-    fun <T> encryptData(stringToEncrypt: T): String {
+    fun <T> encryptData(stringToEncrypt: T, alias: String): String {
 
         stringToEncrypt.let {
             keyStoreWrapper.initKeys()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 cipher.init(
                     Cipher.ENCRYPT_MODE, keyStoreWrapper.getSecretKeyAPIMorGreater(),
-                    GCMParameterSpec(128, FIXED_IV)
+                    GCMParameterSpec(128, Hawk.get(alias))
                 )
             } else {
                 try {
@@ -104,7 +108,7 @@ class CipherWrapper(var context: Context) {
         BadPaddingException::class,
         IllegalBlockSizeException::class
     )
-    fun <T> decryptData(encryptedData: String, type: Class<*>): T? {
+    fun <T> decryptData(encryptedData: String, alias: String, type: Class<*>): T? {
 
         encryptedData.let {
             keyStoreWrapper.initKeys()
@@ -116,7 +120,7 @@ class CipherWrapper(var context: Context) {
                     cipher.init(
                         Cipher.DECRYPT_MODE,
                         keyStoreWrapper.getSecretKeyAPIMorGreater(),
-                        GCMParameterSpec(128, FIXED_IV)
+                        GCMParameterSpec(128, Hawk.get(alias))
                     )
                 } else {
 
