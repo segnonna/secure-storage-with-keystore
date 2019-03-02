@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import hos.houns.seckeystore.SimpleKeystore
 import timber.log.Timber
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -12,18 +13,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         with(SimpleKeystore(this)) {
             saveSensitiveData("name", "Hospice HOUNSOU")
-            /* saveSensitiveData("age", 50)
+            saveSensitiveData("age", 50)
              saveSensitiveData("date", Date())
              saveSensitiveData("weight", 70.0)
-             saveSensitiveData("list", mutableListOf("One", "Two", "Three"))*/
+            /*saveSensitiveData("list", mutableListOf("One", "Two", "Three"))*/
         }
 
         with(SimpleKeystore(this)) {
             Timber.e("name: ${getSensitiveData<String>("name")}")
-            saveSensitiveData("name", "Morrrrrrr")
-            Timber.e("name: ${getSensitiveData<String>("name")}")
-            removeSensitiveData("name")
-            Timber.e("name: ${getSensitiveData<String>("name")}")
+            Timber.e("age: ${getSensitiveData<Int>("age")}")
+            Timber.e("date: ${getSensitiveData<Date>("date")}")
             //Timber.e(getSensitiveData<Int>("age").toString())
             //Timber.e(getSensitiveData<Date>("date")?.time.toString())
             //Timber.e(getSensitiveData<MutableList<String>>("list").toString())
