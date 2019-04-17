@@ -1,21 +1,16 @@
 package hos.houns.seckeystore.encryption
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
 import android.util.Base64
-import androidx.annotation.RequiresApi
 import com.orhanobut.hawk.Hawk
 import hos.houns.seckeystore.SimpleKeystore
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.security.*
 import java.security.cert.CertificateException
-import javax.crypto.BadPaddingException
-import javax.crypto.Cipher
-import javax.crypto.IllegalBlockSizeException
-import javax.crypto.NoSuchPaddingException
+import javax.crypto.*
 import javax.crypto.spec.GCMParameterSpec
 
 
@@ -55,7 +50,8 @@ class CipherWrapper(var context: Context) {
         InvalidKeyException::class,
         NoSuchProviderException::class,
         BadPaddingException::class,
-        IllegalBlockSizeException::class
+        IllegalBlockSizeException::class,
+        AEADBadTagException::class
     )
     fun <T> encryptData(stringToEncrypt: T, alias: String): String {
 
@@ -93,8 +89,7 @@ class CipherWrapper(var context: Context) {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+
     @Throws(
         NoSuchPaddingException::class,
         NoSuchAlgorithmException::class,
@@ -106,7 +101,8 @@ class CipherWrapper(var context: Context) {
         InvalidKeyException::class,
         NoSuchProviderException::class,
         BadPaddingException::class,
-        IllegalBlockSizeException::class
+        IllegalBlockSizeException::class,
+        AEADBadTagException::class
     )
     fun <T> decryptData(encryptedData: String, alias: String, type: Class<*>): T? {
 

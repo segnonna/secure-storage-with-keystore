@@ -16,7 +16,6 @@ import java.util.*
  * Stores application data like password hash.
  */
 class SimpleKeystore constructor(var context: Context) : Storage {
-
     private val STORAGE_SETTINGS: String = "settings"
     private val STORAGE_ENCRYPTION_KEY: String = "encryption_key"
     private val STORAGE_SECRETS: String = "secrets"
@@ -34,7 +33,6 @@ class SimpleKeystore constructor(var context: Context) : Storage {
         val updateDate: Date
     ) : Serializable
 
-
     init {
         Hawk
             .init(context)
@@ -47,7 +45,7 @@ class SimpleKeystore constructor(var context: Context) : Storage {
         return settings.edit().putString(STORAGE_ENCRYPTION_KEY, key).commit()
     }
 
-    internal fun getAesEncryptionKey(): String = settings.getString(STORAGE_ENCRYPTION_KEY, "")!!
+    internal fun getAesEncryptionKey(): String? = settings.getString(STORAGE_ENCRYPTION_KEY, "")
     internal fun removeAesEncryptionKey(): Boolean = settings.edit().remove(STORAGE_ENCRYPTION_KEY).commit()
 
     fun getSensitiveDatas(): List<SensitiveData<*>> {
@@ -130,7 +128,6 @@ class SimpleKeystore constructor(var context: Context) : Storage {
 
             return CipherWrapper(context).decryptData(dataInfo.cipherText, value.alias, dataInfo.keyClazz)
         } ?: return null
-
     }
 
     override fun <T> put(key: String?, value: SensitiveData<T>): Boolean {
@@ -165,6 +162,7 @@ class SimpleKeystore constructor(var context: Context) : Storage {
 
 
     private fun generateIV(): ByteArray {
+
         val random = SecureRandom()
         val bytes = ByteArray(12)
         random.nextBytes(bytes)

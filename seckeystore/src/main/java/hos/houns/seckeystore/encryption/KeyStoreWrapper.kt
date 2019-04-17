@@ -10,8 +10,6 @@ import android.util.Base64
 import androidx.annotation.RequiresApi
 import hos.houns.seckeystore.SimpleKeystore
 import timber.log.Timber
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.math.BigInteger
 import java.security.*
@@ -48,24 +46,36 @@ class KeyStoreWrapper(private val context: Context) {
     )
 
 
+    private fun save() {
+        val key = ByteArray(256)
+        val secureRandom = SecureRandom()
+        secureRandom.nextBytes(key)
+        val encryptedKey = rsaEncryptKey(key)
+        if (mSimpleKeystore.saveAesEncryptionKey(Base64.encodeToString(encryptedKey, Base64.DEFAULT))) {
+            Timber.e("Saved keys successfully")
+        } else {
+            Timber.e("Saved keys unsuccessfully")
+            throw IOException("Could not save keys")
+        }
+    }
+
     private fun saveEncryptedKey() {
         with(mSimpleKeystore) {
-            if (getAesEncryptionKey().isEmpty()) {
-                val key = ByteArray(256)
-                val secureRandom = SecureRandom()
-                secureRandom.nextBytes(key)
-                val encryptedKey = rsaEncryptKey(key)
 
-                if (saveAesEncryptionKey(Base64.encodeToString(encryptedKey, Base64.DEFAULT))) {
-                    Timber.e("Saved keys successfully")
-                } else {
-                    Timber.e("Saved keys unsuccessfully")
-                    throw IOException("Could not save keys")
+            getAesEncryptionKey()?.let {
+
+                if (it.isEmpty()) {
+                    save()
                 }
+
+            } ?: run {
+                save()
             }
+
         }
 
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Throws(NoSuchAlgorithmException::class, NoSuchProviderException::class, InvalidAlgorithmParameterException::class)
@@ -81,7 +91,6 @@ class KeyStoreWrapper(private val context: Context) {
                 .setRandomizedEncryptionRequired(false)
                 .build()
         )
-
         keyGenerator.generateKey()
     }
 
@@ -110,7 +119,10 @@ class KeyStoreWrapper(private val context: Context) {
             .setStartDate(start.time)
             .setEndDate(end.time)
             .build()
+
+
         val kpg = KeyPairGenerator.getInstance(RSA_ALGORITHM_NAME, ANDROID_KEY_STORE_NAME)
+
         kpg.initialize(spec)
         kpg.generateKeyPair()
 
@@ -176,24 +188,18 @@ class KeyStoreWrapper(private val context: Context) {
 
     }
 
-
+    @Throws(
+        RuntimeException::class, NoSuchAlgorithmException::class, NoSuchPaddingException::class,
+        InvalidKeyException::class, IllegalBlockSizeException::class, BadPaddingException::class
+    )
     private fun rsaEncryptKey(secret: ByteArray): ByteArray {
-
         val keyStore = KeyStore.getInstance(ANDROID_KEY_STORE_NAME)
         keyStore.load(null)
-
         val privateKeyEntry = keyStore.getEntry(KEY_ALIAS, null) as KeyStore.PrivateKeyEntry
-        val inputCipher = Cipher.getInstance(
-            RSA_MODE, CIPHER_PROVIDER_NAME_ENCRYPTION_DECRYPTION_RSA
-        )
+        val inputCipher = Cipher.getInstance(RSA_MODE, CIPHER_PROVIDER_NAME_ENCRYPTION_DECRYPTION_RSA)
         inputCipher.init(Cipher.ENCRYPT_MODE, privateKeyEntry.certificate.publicKey)
 
-        val outputStream = ByteArrayOutputStream()
-        val cipherOutputStream = CipherOutputStream(outputStream, inputCipher)
-        cipherOutputStream.write(secret)
-        cipherOutputStream.close()
-
-        return outputStream.toByteArray()
+        return inputCipher.doFinal(secret)
     }
 
     @Throws(
@@ -204,7 +210,9 @@ class KeyStoreWrapper(private val context: Context) {
         UnrecoverableEntryException::class,
         NoSuchProviderException::class,
         NoSuchPaddingException::class,
-        InvalidKeyException::class
+        InvalidKeyException::class,
+        IllegalBlockSizeException::class,
+        BadPaddingException::class
     )
     private fun rsaDecryptKey(encrypted: ByteArray): ByteArray {
 
@@ -212,24 +220,14 @@ class KeyStoreWrapper(private val context: Context) {
         keyStore.load(null)
 
         val privateKeyEntry = keyStore.getEntry(KEY_ALIAS, null) as KeyStore.PrivateKeyEntry
+
         val output = Cipher.getInstance(RSA_MODE, CIPHER_PROVIDER_NAME_ENCRYPTION_DECRYPTION_RSA)
-        output.init(Cipher.DECRYPT_MODE, privateKeyEntry.privateKey)
-        val cipherInputStream = CipherInputStream(
-            ByteArrayInputStream(encrypted), output
+        output.init(
+            Cipher.DECRYPT_MODE,
+            privateKeyEntry.privateKey
         )
-        val values = ArrayList<Byte>()
 
-        while (true) {
-            val byteCount = cipherInputStream.read()
-            if (byteCount < 0) break
-            values.add(byteCount.toByte())
-        }
-
-        val decryptedKeyAsBytes = ByteArray(values.size)
-        for (i in decryptedKeyAsBytes.indices) {
-            decryptedKeyAsBytes[i] = values[i]
-        }
-        return decryptedKeyAsBytes
+        return output.doFinal(encrypted)
     }
 
     @Throws(KeyStoreException::class, CertificateException::class, NoSuchAlgorithmException::class, IOException::class)

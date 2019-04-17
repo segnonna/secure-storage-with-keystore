@@ -15,18 +15,13 @@ class MainActivity : AppCompatActivity() {
             saveSensitiveData("name", "Hospice HOUNSOU")
             saveSensitiveData("age", 50)
              saveSensitiveData("date", Date())
-             saveSensitiveData("weight", 70.0)
+            // saveSensitiveData("weight", 70.0)
             /*saveSensitiveData("list", mutableListOf("One", "Two", "Three"))*/
-        }
 
-        with(SimpleKeystore(this)) {
             Timber.e("name: ${getSensitiveData<String>("name")}")
             Timber.e("age: ${getSensitiveData<Int>("age")}")
             Timber.e("date: ${getSensitiveData<Date>("date")}")
-            //Timber.e(getSensitiveData<Int>("age").toString())
-            //Timber.e(getSensitiveData<Date>("date")?.time.toString())
-            //Timber.e(getSensitiveData<MutableList<String>>("list").toString())
-
         }
+
     }
 }
