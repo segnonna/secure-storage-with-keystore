@@ -160,9 +160,7 @@ class SimpleKeystore constructor(var context: Context) : Storage {
         return sensitiveDataPrefs.contains(key)
     }
 
-
     private fun generateIV(): ByteArray {
-
         val random = SecureRandom()
         val bytes = ByteArray(12)
         random.nextBytes(bytes)

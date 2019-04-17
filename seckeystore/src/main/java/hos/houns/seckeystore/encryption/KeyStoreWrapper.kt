@@ -46,30 +46,37 @@ class KeyStoreWrapper(private val context: Context) {
     )
 
 
-    private fun save() {
-        val key = ByteArray(256)
-        val secureRandom = SecureRandom()
-        secureRandom.nextBytes(key)
-        val encryptedKey = rsaEncryptKey(key)
-        if (mSimpleKeystore.saveAesEncryptionKey(Base64.encodeToString(encryptedKey, Base64.DEFAULT))) {
-            Timber.e("Saved keys successfully")
-        } else {
-            Timber.e("Saved keys unsuccessfully")
-            throw IOException("Could not save keys")
-        }
-    }
-
     private fun saveEncryptedKey() {
         with(mSimpleKeystore) {
 
             getAesEncryptionKey()?.let {
 
                 if (it.isEmpty()) {
-                    save()
+                    val key = ByteArray(256)
+                    val secureRandom = SecureRandom()
+                    secureRandom.nextBytes(key)
+                    val encryptedKey = rsaEncryptKey(key)
+
+                    if (saveAesEncryptionKey(Base64.encodeToString(encryptedKey, Base64.DEFAULT))) {
+                        Timber.e("Saved keys successfully")
+                    } else {
+                        Timber.e("Saved keys unsuccessfully")
+                        throw IOException("Could not save keys")
+                    }
                 }
 
             } ?: run {
-                save()
+                val key = ByteArray(256)
+                val secureRandom = SecureRandom()
+                secureRandom.nextBytes(key)
+                val encryptedKey = rsaEncryptKey(key)
+
+                if (saveAesEncryptionKey(Base64.encodeToString(encryptedKey, Base64.DEFAULT))) {
+                    Timber.e("Saved keys successfully")
+                } else {
+                    Timber.e("Saved keys unsuccessfully")
+                    throw IOException("Could not save keys")
+                }
             }
 
         }
