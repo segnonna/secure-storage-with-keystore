@@ -129,8 +129,7 @@ class SimpleKeystore constructor(var context: Context) : Storage {
             // Timber.e(dataInfo.keyClazz.name)
 
             return try {
-                // CipherWrapper(context).decryptData(dataInfo.cipherText, value.alias, dataInfo.keyClazz)
-                return null
+                return CipherWrapper(context).decryptData(dataInfo.cipherText, value.alias, dataInfo.keyClazz)
             } catch (e: KeyStoreException) {
                 null
             }
