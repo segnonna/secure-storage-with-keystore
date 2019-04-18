@@ -8,10 +8,13 @@ import hos.houns.seckeystore.encryption.CipherWrapper
 import hos.houns.seckeystore.utils.GsonParser
 import hos.houns.seckeystore.utils.SimpleKeystoreSerializer
 import timber.log.Timber
+import java.io.IOException
 import java.io.Serializable
-import java.security.KeyStoreException
-import java.security.SecureRandom
+import java.security.*
+import java.security.cert.CertificateException
 import java.util.*
+import javax.crypto.AEADBadTagException
+import javax.crypto.IllegalBlockSizeException
 
 /**
  * Stores application data like password hash.
@@ -131,6 +134,20 @@ class SimpleKeystore constructor(var context: Context) : Storage {
             return try {
                 return CipherWrapper(context).decryptData(dataInfo.cipherText, value.alias, dataInfo.keyClazz)
             } catch (e: KeyStoreException) {
+                null
+            } catch (e: CertificateException) {
+                null
+            } catch (e: AEADBadTagException) {
+                null
+            } catch (e: NoSuchAlgorithmException) {
+                null
+            } catch (e: IOException) {
+                null
+            } catch (e: UnrecoverableEntryException) {
+                null
+            } catch (e: InvalidKeyException) {
+                null
+            } catch (e: IllegalBlockSizeException) {
                 null
             }
 
