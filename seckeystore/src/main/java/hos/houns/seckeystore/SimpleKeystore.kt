@@ -3,7 +3,6 @@ package hos.houns.seckeystore
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.orhanobut.hawk.Hawk
 import hos.houns.seckeystore.encryption.CipherWrapper
 import hos.houns.seckeystore.utils.GsonParser
 import hos.houns.seckeystore.utils.SimpleKeystoreSerializer
@@ -38,9 +37,6 @@ class SimpleKeystore constructor(var context: Context) : Storage {
     ) : Serializable
 
     init {
-        Hawk
-            .init(context)
-            .build()
         settings = context.getSharedPreferences(STORAGE_SETTINGS, android.content.Context.MODE_PRIVATE)
         sensitiveDataPrefs = context.getSharedPreferences(STORAGE_SECRETS, android.content.Context.MODE_PRIVATE)
     }
@@ -94,7 +90,6 @@ class SimpleKeystore constructor(var context: Context) : Storage {
 
 
     private fun <T> createSecretData(alias: String, secret: T, createDate: Date): SensitiveData<*> {
-        Hawk.put(alias, generateIV())
         val encryptedSecret = encryptSecret(secret, alias)
         // val plaintext = secureSharedConverter.toString(secret)
         val serialize = simpleKeystoreSerializer.serialize(encryptedSecret, secret)
@@ -182,13 +177,6 @@ class SimpleKeystore constructor(var context: Context) : Storage {
 
     override fun contains(key: String?): Boolean {
         return sensitiveDataPrefs.contains(key)
-    }
-
-    private fun generateIV(): ByteArray {
-        val random = SecureRandom()
-        val bytes = ByteArray(12)
-        random.nextBytes(bytes)
-        return bytes
     }
 
     inline fun <T> tryCatch(blockTry: () -> T, blockCatch: () -> Unit = {}) = try {

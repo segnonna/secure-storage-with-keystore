@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.Base64
-import com.orhanobut.hawk.Hawk
 import hos.houns.seckeystore.SimpleKeystore
 import java.io.IOException
 import java.nio.charset.StandardCharsets
@@ -22,7 +21,7 @@ class CipherWrapper(var context: Context) {
     private val AES_MODE_LESS_THAN_M = "AES/ECB/PKCS7Padding"
 
     // TODO update these bytes to be random for IV of encryption
-    //private val FIXED_IV = byteArrayOf(55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44)
+    private val FIXED_IV = byteArrayOf(55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44)
 
     private val CIPHER_PROVIDER_NAME_ENCRYPTION_DECRYPTION_AES = "BC"
     private var cipher: Cipher
@@ -61,7 +60,7 @@ class CipherWrapper(var context: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 cipher.init(
                     Cipher.ENCRYPT_MODE, keyStoreWrapper.getSecretKeyAPIMorGreater(),
-                    GCMParameterSpec(128, Hawk.get(alias))
+                    GCMParameterSpec(128, FIXED_IV)
                 )
             } else {
                 try {
@@ -104,8 +103,7 @@ class CipherWrapper(var context: Context) {
         BadPaddingException::class,
         IllegalBlockSizeException::class,
         AEADBadTagException::class,
-        KeyStoreException::class
-    )
+        KeyStoreException::class)
     fun <T> decryptData(encryptedData: String, alias: String, type: Class<*>): T? {
 
         encryptedData.let {
@@ -118,7 +116,7 @@ class CipherWrapper(var context: Context) {
                     cipher.init(
                         Cipher.DECRYPT_MODE,
                         keyStoreWrapper.getSecretKeyAPIMorGreater(),
-                        GCMParameterSpec(128, Hawk.get(alias))
+                        GCMParameterSpec(128, FIXED_IV)
                     )
                 } else {
 
