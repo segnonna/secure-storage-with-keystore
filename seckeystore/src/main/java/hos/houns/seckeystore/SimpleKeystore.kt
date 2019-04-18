@@ -9,6 +9,7 @@ import hos.houns.seckeystore.utils.GsonParser
 import hos.houns.seckeystore.utils.SimpleKeystoreSerializer
 import timber.log.Timber
 import java.io.Serializable
+import java.security.KeyStoreException
 import java.security.SecureRandom
 import java.util.*
 
@@ -116,6 +117,7 @@ class SimpleKeystore constructor(var context: Context) : Storage {
     /**
      * Decrypt secret before showing it.
      */
+
     fun <T> getSensitiveData(alias: String): T? {
         //Timber.i("------- getSensitiveDataString")
         val value = getSensitiveDataFromSharedPrefs(alias)
@@ -126,11 +128,17 @@ class SimpleKeystore constructor(var context: Context) : Storage {
             //Timber.e(dataInfo.cipherText)
             // Timber.e(dataInfo.keyClazz.name)
 
-            return CipherWrapper(context).decryptData(dataInfo.cipherText, value.alias, dataInfo.keyClazz)
+            return try {
+                // CipherWrapper(context).decryptData(dataInfo.cipherText, value.alias, dataInfo.keyClazz)
+                return null
+            } catch (e: KeyStoreException) {
+                null
+            }
+
         } ?: return null
     }
 
-    override fun <T> put(key: String?, value: SensitiveData<T>): Boolean {
+    override fun <T> put(key: String?, value: SimpleKeystore.SensitiveData<T>): Boolean {
         return sensitiveDataPrefs.edit().putString(key, gson.toJson(value)).commit()
     }
 
@@ -165,6 +173,17 @@ class SimpleKeystore constructor(var context: Context) : Storage {
         val bytes = ByteArray(12)
         random.nextBytes(bytes)
         return bytes
+    }
+
+    inline fun <T> tryCatch(blockTry: () -> T, blockCatch: () -> Unit = {}) = try {
+        blockTry()
+    } catch (e: Throwable) {
+        blockCatch()
+    }
+
+    inline fun <T> justTry(block: () -> T) = try {
+        block()
+    } catch (e: Throwable) {
     }
 
 }

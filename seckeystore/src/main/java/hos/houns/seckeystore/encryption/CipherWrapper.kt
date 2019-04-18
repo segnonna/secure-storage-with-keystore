@@ -51,7 +51,8 @@ class CipherWrapper(var context: Context) {
         NoSuchProviderException::class,
         BadPaddingException::class,
         IllegalBlockSizeException::class,
-        AEADBadTagException::class
+        AEADBadTagException::class,
+        KeyStoreException::class
     )
     fun <T> encryptData(stringToEncrypt: T, alias: String): String {
 
@@ -102,7 +103,8 @@ class CipherWrapper(var context: Context) {
         NoSuchProviderException::class,
         BadPaddingException::class,
         IllegalBlockSizeException::class,
-        AEADBadTagException::class
+        AEADBadTagException::class,
+        KeyStoreException::class
     )
     fun <T> decryptData(encryptedData: String, alias: String, type: Class<*>): T? {
 
