@@ -77,12 +77,11 @@ dependencies {
 To securely store your data,
 
 ```
-with(SimpleKeystore(this)) {
-            saveSensitiveData("name", "Hospice HOUNSOU")
-            saveSensitiveData("age", 50)
-            saveSensitiveData("date", Date())
-            saveSensitiveData("weight", 70.0)
-        }
+SecureStorage.setValue("name", "Hospice HOUNSOU")
+        SecureStorage.setValue("age", 50)
+        SecureStorage.setValue("date", Date())
+        SecureStorage.setValue("weight", 70.0)
+        SecureStorage.setValue("list", mutableListOf("One", "Two", "Three"))
 
 ```
 In this exemple, name is stored in sharedPreferences as **n7QHzGOUs2iDkNFZDU/HQ0sflqFh0HWCkqcV8I5kKMxU**
@@ -90,10 +89,11 @@ In this exemple, name is stored in sharedPreferences as **n7QHzGOUs2iDkNFZDU/HQ0
 To read secured data,
 
 ```
- with(SimpleKeystore(this)) {
-            Timber.e(getSensitiveData<String>("name") )
-            Timber.e(getSensitiveData<Int>("age").toString() )
-            Timber.e(getSensitiveData<Date>("date")?.time.toString() )
+Timber.e("name: ${SecureStorage.getValue<String>("name")}")
+        Timber.e("age: ${SecureStorage.getValue<Int>("age")}")
+        Timber.e("date: ${SecureStorage.getValue<Date>("date")}")
+        Timber.e("weight: ${SecureStorage.getValue<Double>("weight")}")
+        Timber.e("list: ${SecureStorage.getValue<MutableList<String>>("list")?.first()}")
 }
 
 ```

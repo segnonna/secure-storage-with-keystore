@@ -18,5 +18,4 @@ object SecureStorage {
         StorageImpl().clear()
     }
 
-
 }
