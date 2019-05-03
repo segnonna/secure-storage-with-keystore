@@ -1,1 +1,1 @@
-include ':app', ':seckeystore'
+include ':app', ':securestorage'

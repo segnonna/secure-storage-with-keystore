@@ -1,4 +1,4 @@
-package hos.houns.seckeystore.utils
+package hos.houns.securestorage.utils
 
 import android.text.TextUtils
 
@@ -14,6 +14,7 @@ import java.lang.reflect.Type
 
 
 class GsonParser(private val gson: Gson) : Parser {
+
     @Throws(JsonSyntaxException::class)
     override fun <T> fromJson(content: String?, type: Type?): T? {
         return if (TextUtils.isEmpty(content)) {

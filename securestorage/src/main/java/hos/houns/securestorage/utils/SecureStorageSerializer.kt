@@ -1,4 +1,4 @@
-package hos.houns.seckeystore.utils
+package hos.houns.securestorage.utils
 
 /**
  * Created by hospicehounsou on 28,June,2018
@@ -6,7 +6,7 @@ package hos.houns.seckeystore.utils
  */
 
 
-class SimpleKeystoreSerializer : Serializer {
+class SecureStorageSerializer : Serializer {
 
     override fun <T> serialize(cipherText: String, value: T): String {
 
@@ -52,8 +52,8 @@ class SimpleKeystoreSerializer : Serializer {
                 cipherText
     }
 
-    override fun deserialize(serializedText: String): DataInfo {
-        val infos = serializedText.split(INFO_DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+    override fun deserialize(plainText: String): DataInfo {
+        val infos = plainText.split(INFO_DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
         infos.forEach {
             // Timber.e("infos -> $it")

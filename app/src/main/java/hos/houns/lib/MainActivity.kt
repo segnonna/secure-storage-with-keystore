@@ -2,7 +2,7 @@ package hos.houns.lib
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import hos.houns.seckeystore.SimpleKeystore
+import hos.houns.securestorage.SecureStorage
 import timber.log.Timber
 import java.util.*
 
@@ -11,19 +11,23 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        with(SimpleKeystore(this)) {
-            saveSensitiveData("name", "Hospice HOUNSOU")
-            saveSensitiveData("age", 50)
-             saveSensitiveData("date", Date())
-            saveSensitiveData("weight", 70.0)
-            saveSensitiveData("list", mutableListOf("One", "Two", "Three"))
 
-            Timber.e("name: ${getSensitiveData<String>("name")}")
-            Timber.e("age: ${getSensitiveData<Int>("age")}")
-            Timber.e("date: ${getSensitiveData<Date>("date")}")
-            Timber.e("weight: ${getSensitiveData<Double>("weight")}")
-            Timber.e("list: ${getSensitiveData<MutableList<String>>("list")?.first()}")
-        }
+        SecureStorage.setValue("name", "Hospice HOUNSOU")
+        SecureStorage.setValue("age", 50)
+        SecureStorage.setValue("date", Date())
+        SecureStorage.setValue("weight", 70.0)
+        SecureStorage.setValue("list", mutableListOf("One", "Two", "Three"))
+
+        Timber.e("name: ${SecureStorage.getValue<String>("name")}")
+        Timber.e("age: ${SecureStorage.getValue<Int>("age")}")
+        Timber.e("date: ${SecureStorage.getValue<Date>("date")}")
+        Timber.e("weight: ${SecureStorage.getValue<Double>("weight")}")
+        Timber.e("list: ${SecureStorage.getValue<MutableList<String>>("list")?.first()}")
+
+
+        SecureStorage.clearAll()
+        Timber.e("name: ${SecureStorage.getValue<String>("name")}")
+
 
     }
 }
