@@ -68,7 +68,7 @@ and in the app or module build.gradle:
 
 ```
 dependencies {
-    api 'com.github.hounsouh:simplekeystore:$releaseVersion'
+    api 'com.github.hounsouh:secure-storage-with-keystore:$releaseVersion'
 }
 ```
 
@@ -77,7 +77,7 @@ dependencies {
 To securely store your data,
 
 ```
-SecureStorage.setValue("name", "Hospice HOUNSOU")
+        SecureStorage.setValue("name", "Hospice HOUNSOU")
         SecureStorage.setValue("age", 50)
         SecureStorage.setValue("date", Date())
         SecureStorage.setValue("weight", 70.0)
@@ -89,7 +89,7 @@ In this exemple, name is stored in sharedPreferences as **n7QHzGOUs2iDkNFZDU/HQ0
 To read secured data,
 
 ```
-Timber.e("name: ${SecureStorage.getValue<String>("name")}")
+        Timber.e("name: ${SecureStorage.getValue<String>("name")}")
         Timber.e("age: ${SecureStorage.getValue<Int>("age")}")
         Timber.e("date: ${SecureStorage.getValue<Date>("date")}")
         Timber.e("weight: ${SecureStorage.getValue<Double>("weight")}")
