@@ -19,6 +19,7 @@ class GsonParser(private val gson: Gson) : Parser {
         return if (TextUtils.isEmpty(content)) {
             null
         } else gson.fromJson<T>(content, type)
+
     }
 
     override fun toJson(body: Any?): String {

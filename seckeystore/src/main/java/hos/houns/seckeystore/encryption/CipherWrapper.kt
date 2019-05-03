@@ -134,6 +134,7 @@ class CipherWrapper(var context: Context) {
 
             val decodedBytes = cipher.doFinal(encryptedDecodedData)
 
+            //Timber.e("type $type")
             return SimpleKeystore(context).gsonParser.fromJson(String(decodedBytes, StandardCharsets.UTF_8), type)
 
         }

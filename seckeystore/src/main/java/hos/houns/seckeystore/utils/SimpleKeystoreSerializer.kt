@@ -15,17 +15,15 @@ class SimpleKeystoreSerializer : Serializer {
         val dataType: Char
 
         if (Generic<MutableList<Any>>().checkType(value!!)) {
-            val list = value as MutableList<*>
 
-            if (!list.isEmpty()) {
-                keyClassName = list.first()?.javaClass?.name!!
-            }
+            val list = value as MutableList<*>
+            keyClassName = list.javaClass.name
             dataType = DataInfo.TYPE_LIST
 
         } else if (Generic<Map<Any, Any>>().checkType(value)) {
             dataType = DataInfo.TYPE_MAP
             val map = value as Map<*, *>
-            if (!map.isEmpty()) {
+            if (map.isNotEmpty()) {
                 for ((key, value) in map) {
 
                     keyClassName = key?.javaClass?.name!!
@@ -35,7 +33,7 @@ class SimpleKeystoreSerializer : Serializer {
             }
         } else if (Generic<Set<Any>>().checkType(value)) {
             val set = value as Set<*>
-            if (!set.isEmpty()) {
+            if (set.isNotEmpty()) {
                 val iterator = set.iterator()
                 if (iterator.hasNext()) {
                     keyClassName = iterator.next()?.javaClass?.name!!
@@ -63,7 +61,7 @@ class SimpleKeystoreSerializer : Serializer {
 
         val type = infos[2][0]
 
-        //Timber.e("type -> $type")
+        // Timber.e("type -> $type")
 
         // if it is collection, no need to create the class object
         var keyClazz: Class<*>? = null
