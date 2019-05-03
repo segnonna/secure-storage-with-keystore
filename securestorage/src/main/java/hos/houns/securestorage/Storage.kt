@@ -1,4 +1,6 @@
-package hos.houns.seckeystore
+package hos.houns.securestorage
+
+import hos.houns.securestorage.utils.SensitiveData
 
 /**
  * Created by hospicehounsou on 28,June,2018
@@ -7,9 +9,9 @@ package hos.houns.seckeystore
 
 interface Storage {
 
-    fun <T> put(key: String?, value: SimpleKeystore.SensitiveData<T>): Boolean
+    fun <T> put(key: String?, value: SensitiveData<T>): Boolean
 
-    fun get(key: String?): SimpleKeystore.SensitiveData<*>
+    fun get(key: String?): SensitiveData<*>
     fun getAll(): MutableMap<String, *>?
 
     fun delete(key: String?): Boolean

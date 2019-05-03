@@ -1,12 +1,12 @@
-package hos.houns.seckeystore.encryption
+package hos.houns.securestorage.encryption
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.Base64
-import hos.houns.seckeystore.SimpleKeystore
+import hos.houns.securestorage.StorageImpl
 import java.io.IOException
-import java.nio.charset.StandardCharsets
+import java.nio.charset.Charset
 import java.security.*
 import java.security.cert.CertificateException
 import javax.crypto.*
@@ -53,7 +53,7 @@ class CipherWrapper(var context: Context) {
         AEADBadTagException::class,
         KeyStoreException::class
     )
-    fun <T> encryptData(stringToEncrypt: T, alias: String): String {
+    fun <T> encryptData(stringToEncrypt: T): String {
 
         stringToEncrypt.let {
             keyStoreWrapper.initKeys()
@@ -81,7 +81,7 @@ class CipherWrapper(var context: Context) {
             }
         }
         val encodedBytes = cipher.doFinal(
-                SimpleKeystore(context).gsonParser.toJson(stringToEncrypt).toByteArray(
+            StorageImpl().gsonParser.toJson(stringToEncrypt).toByteArray(
                 charset(CHARSET_NAME)
             )
         )
@@ -104,7 +104,7 @@ class CipherWrapper(var context: Context) {
         IllegalBlockSizeException::class,
         AEADBadTagException::class,
         KeyStoreException::class)
-    fun <T> decryptData(encryptedData: String, alias: String, type: Class<*>): T? {
+    fun <T> decryptData(encryptedData: String, type: Class<*>): T? {
 
         encryptedData.let {
             keyStoreWrapper.initKeys()
@@ -135,7 +135,7 @@ class CipherWrapper(var context: Context) {
             val decodedBytes = cipher.doFinal(encryptedDecodedData)
 
             //Timber.e("type $type")
-            return SimpleKeystore(context).gsonParser.fromJson(String(decodedBytes, StandardCharsets.UTF_8), type)
+            return StorageImpl().gsonParser.fromJson(String(decodedBytes, Charset.forName("UTF-8")), type)
 
         }
 

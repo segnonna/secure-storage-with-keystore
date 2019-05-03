@@ -1,44 +1,51 @@
-package hos.houns.seckeystore
+package hos.houns.securestorage
 
-import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import hos.houns.seckeystore.encryption.CipherWrapper
-import hos.houns.seckeystore.utils.GsonParser
-import hos.houns.seckeystore.utils.SimpleKeystoreSerializer
+import hos.houns.securestorage.encryption.CipherWrapper
+import hos.houns.securestorage.utils.GsonParser
+import hos.houns.securestorage.utils.SecureStorageProvider
+import hos.houns.securestorage.utils.SecureStorageSerializer
+import hos.houns.securestorage.utils.SensitiveData
 import timber.log.Timber
 import java.io.IOException
-import java.io.Serializable
-import java.security.*
+import java.security.InvalidKeyException
+import java.security.KeyStoreException
+import java.security.NoSuchAlgorithmException
+import java.security.UnrecoverableEntryException
 import java.security.cert.CertificateException
 import java.util.*
 import javax.crypto.AEADBadTagException
 import javax.crypto.IllegalBlockSizeException
 
+
 /**
- * Stores application data like password hash.
+ * Created by hospicehounsou on 03,May,2019
+ * Dakar, Senegal.
  */
-class SimpleKeystore constructor(var context: Context) : Storage {
+class StorageImpl : Storage {
+
     private val STORAGE_SETTINGS: String = "settings"
     private val STORAGE_ENCRYPTION_KEY: String = "encryption_key"
     private val STORAGE_SECRETS: String = "secrets"
-    private val settings: SharedPreferences
-    private val sensitiveDataPrefs: SharedPreferences
+    private lateinit var settings: SharedPreferences
+    private lateinit var sensitiveDataPrefs: SharedPreferences
 
     private val gson: Gson by lazy(LazyThreadSafetyMode.NONE) { Gson() }
     internal val gsonParser: GsonParser by lazy(LazyThreadSafetyMode.NONE) { GsonParser(gson) }
-    private val simpleKeystoreSerializer: SimpleKeystoreSerializer by lazy(LazyThreadSafetyMode.NONE) { SimpleKeystoreSerializer() }
+    private val secureStorageSerializer: SecureStorageSerializer by lazy(LazyThreadSafetyMode.NONE) { SecureStorageSerializer() }
 
-    data class SensitiveData<T>(
-        val alias: String,
-        val secret: T,
-        val createDate: Date,
-        val updateDate: Date
-    ) : Serializable
+
 
     init {
-        settings = context.getSharedPreferences(STORAGE_SETTINGS, android.content.Context.MODE_PRIVATE)
-        sensitiveDataPrefs = context.getSharedPreferences(STORAGE_SECRETS, android.content.Context.MODE_PRIVATE)
+        SecureStorageProvider.mContext.get()
+            ?.getSharedPreferences(STORAGE_SETTINGS, android.content.Context.MODE_PRIVATE)?.let {
+            settings = it
+        }
+        SecureStorageProvider.mContext.get()
+            ?.getSharedPreferences(STORAGE_SECRETS, android.content.Context.MODE_PRIVATE)?.let {
+            sensitiveDataPrefs = it
+        }
     }
 
     internal fun saveAesEncryptionKey(key: String): Boolean {
@@ -82,7 +89,7 @@ class SimpleKeystore constructor(var context: Context) : Storage {
     fun removeSensitiveData(alias: String): Boolean = sensitiveDataPrefs.edit().remove(alias).commit()
 
     private fun getSensitiveDataFromSharedPrefs(alias: String): SensitiveData<*>? =
-            gson.fromJson(sensitiveDataPrefs.getString(alias, "")!!, SensitiveData::class.java)
+        gson.fromJson(sensitiveDataPrefs.getString(alias, "")!!, SensitiveData::class.java)
 
     fun <T> saveSensitiveData(alias: String, secret: T) {
         put(alias, createSecretData(alias, secret, Date()))
@@ -90,9 +97,9 @@ class SimpleKeystore constructor(var context: Context) : Storage {
 
 
     private fun <T> createSecretData(alias: String, secret: T, createDate: Date): SensitiveData<*> {
-        val encryptedSecret = encryptSecret(secret, alias)
+        val encryptedSecret = encryptSecret(secret)
         // val plaintext = secureSharedConverter.toString(secret)
-        val serialize = simpleKeystoreSerializer.serialize(encryptedSecret, secret)
+        val serialize = secureStorageSerializer.serialize(encryptedSecret, secret)
         //Timber.e("serialize : $plaintext")
         // Timber.e("serialize : $serialize")
 
@@ -107,8 +114,8 @@ class SimpleKeystore constructor(var context: Context) : Storage {
     /**
      * Encrypt secret before saving it.
      */
-    private fun <T> encryptSecret(secret: T, alias: String): String {
-        return CipherWrapper(context).encryptData(secret, alias)
+    private fun <T> encryptSecret(secret: T): String {
+        return CipherWrapper(SecureStorageProvider.mContext.get()!!).encryptData(secret)
     }
 
 
@@ -122,12 +129,15 @@ class SimpleKeystore constructor(var context: Context) : Storage {
 
         val secretSerialized = value?.secret
         secretSerialized?.let {
-            val dataInfo = simpleKeystoreSerializer.deserialize(secretSerialized as String)
+            val dataInfo = secureStorageSerializer.deserialize(secretSerialized as String)
             //Timber.e(dataInfo.cipherText)
             // Timber.e(dataInfo.keyClazz.name)
 
             return try {
-                return CipherWrapper(context).decryptData(dataInfo.cipherText, value.alias, dataInfo.keyClazz)
+                return CipherWrapper(SecureStorageProvider.mContext.get()!!).decryptData(
+                    dataInfo.cipherText,
+                    dataInfo.keyClazz
+                )
             } catch (e: KeyStoreException) {
                 null
             } catch (e: CertificateException) {
@@ -149,7 +159,7 @@ class SimpleKeystore constructor(var context: Context) : Storage {
         } ?: return null
     }
 
-    override fun <T> put(key: String?, value: SimpleKeystore.SensitiveData<T>): Boolean {
+    override fun <T> put(key: String?, value: SensitiveData<T>): Boolean {
         return sensitiveDataPrefs.edit().putString(key, gson.toJson(value)).commit()
     }
 

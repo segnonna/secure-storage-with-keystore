@@ -1,4 +1,4 @@
-package hos.houns.seckeystore;
+package hos.houns.securestorage;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -20,6 +20,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("hos.houns.seckeystore.test", appContext.getPackageName());
+        assertEquals("hos.houns.securestorage.test", appContext.getPackageName());
     }
 }

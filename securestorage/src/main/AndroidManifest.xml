@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="hos.houns.securestorage">
+
+    <application>
+        <provider
+                android:name="hos.houns.securestorage.utils.SecureStorageProvider"
+                android:authorities="${applicationId}.hos.houns.securestorage.utils"
+                android:enabled="true"
+                android:exported="false"/>
+    </application>
+</manifest>
+
+

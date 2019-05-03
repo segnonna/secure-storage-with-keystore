@@ -1,4 +1,4 @@
-package hos.houns.seckeystore.encryption
+package hos.houns.securestorage.encryption
 
 import android.content.Context
 import android.os.Build
@@ -8,7 +8,7 @@ import android.security.keystore.KeyProperties
 import android.text.TextUtils
 import android.util.Base64
 import androidx.annotation.RequiresApi
-import hos.houns.seckeystore.SimpleKeystore
+import hos.houns.securestorage.StorageImpl
 import timber.log.Timber
 import java.io.IOException
 import java.math.BigInteger
@@ -31,8 +31,6 @@ class KeyStoreWrapper(private val context: Context) {
     private val RSA_MODE = "RSA/ECB/PKCS1Padding"
     private val CIPHER_PROVIDER_NAME_ENCRYPTION_DECRYPTION_RSA = "AndroidOpenSSL"
 
-    private val mSimpleKeystore: SimpleKeystore by lazy(LazyThreadSafetyMode.NONE) { SimpleKeystore(context) }
-
 
     @Throws(
         CertificateException::class,
@@ -47,11 +45,11 @@ class KeyStoreWrapper(private val context: Context) {
 
 
     private fun saveEncryptedKey() {
-        with(mSimpleKeystore) {
+        with(StorageImpl()) {
 
-            getAesEncryptionKey()?.let {
+            getAesEncryptionKey().let {
 
-                if (it.isEmpty()) {
+                if (it?.isEmpty()!!) {
                     val key = ByteArray(256)
                     val secureRandom = SecureRandom()
                     secureRandom.nextBytes(key)
@@ -65,18 +63,6 @@ class KeyStoreWrapper(private val context: Context) {
                     }
                 }
 
-            } ?: run {
-                val key = ByteArray(256)
-                val secureRandom = SecureRandom()
-                secureRandom.nextBytes(key)
-                val encryptedKey = rsaEncryptKey(key)
-
-                if (saveAesEncryptionKey(Base64.encodeToString(encryptedKey, Base64.DEFAULT))) {
-                    Timber.e("Saved keys successfully")
-                } else {
-                    Timber.e("Saved keys unsuccessfully")
-                    throw IOException("Could not save keys")
-                }
             }
 
         }
@@ -172,7 +158,7 @@ class KeyStoreWrapper(private val context: Context) {
     )
 
     internal fun getSecretKeyAPILessThanM(): Key {
-        val encryptedKeyBase64Encoded = mSimpleKeystore.getAesEncryptionKey()
+        val encryptedKeyBase64Encoded = StorageImpl().getAesEncryptionKey()
         if (TextUtils.isEmpty(encryptedKeyBase64Encoded)) {
             throw InvalidKeyException("Saved key missing from shared preferences")
         }
@@ -250,7 +236,7 @@ class KeyStoreWrapper(private val context: Context) {
     @Throws(KeyStoreException::class)
     private fun removeKeys(keyStore: KeyStore) {
         keyStore.deleteEntry(KEY_ALIAS)
-        mSimpleKeystore.removeAesEncryptionKey()
+        StorageImpl().removeAesEncryptionKey()
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -269,7 +255,7 @@ class KeyStoreWrapper(private val context: Context) {
                 }
 
                 if (keyEntry is KeyStore.PrivateKeyEntry && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    val secretKey = mSimpleKeystore.getAesEncryptionKey()
+                    val secretKey = StorageImpl().getAesEncryptionKey()
                     // When doing "Clear data" on Android 4.x it removes the shared preferences (where
                     // we have stored our encrypted secret key) but not the key entry. Check for existence
                     // of key here as well.

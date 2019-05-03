@@ -1,4 +1,4 @@
-package hos.houns.seckeystore;
+package hos.houns.securestorage;
 
 import org.junit.Test;
 
