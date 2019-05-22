@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import hos.houns.securestorage.encryption.CipherWrapper
 import hos.houns.securestorage.utils.GsonParser
-import hos.houns.securestorage.utils.SecureStorageProvider
 import hos.houns.securestorage.utils.SecureStorageSerializer
 import hos.houns.securestorage.utils.SensitiveData
 import timber.log.Timber
@@ -38,11 +37,11 @@ class StorageImpl : Storage {
 
 
     init {
-        SecureStorageProvider.mContext.get()
+        SecureStorage.mContext.get()
             ?.getSharedPreferences(STORAGE_SETTINGS, android.content.Context.MODE_PRIVATE)?.let {
             settings = it
         }
-        SecureStorageProvider.mContext.get()
+        SecureStorage.mContext.get()
             ?.getSharedPreferences(STORAGE_SECRETS, android.content.Context.MODE_PRIVATE)?.let {
             sensitiveDataPrefs = it
         }
@@ -71,9 +70,8 @@ class StorageImpl : Storage {
         return secretsList
     }
 
-    fun clear() {
-        settings.edit().clear().apply()
-        sensitiveDataPrefs.edit().clear().apply()
+    fun clear(): Boolean {
+        return settings.edit().clear().commit() && sensitiveDataPrefs.edit().clear().commit()
     }
 
 
@@ -115,7 +113,7 @@ class StorageImpl : Storage {
      * Encrypt secret before saving it.
      */
     private fun <T> encryptSecret(secret: T): String {
-        return CipherWrapper(SecureStorageProvider.mContext.get()!!).encryptData(secret)
+        return CipherWrapper(SecureStorage.mContext.get()!!).encryptData(secret)
     }
 
 
@@ -134,7 +132,7 @@ class StorageImpl : Storage {
             // Timber.e(dataInfo.keyClazz.name)
 
             return try {
-                return CipherWrapper(SecureStorageProvider.mContext.get()!!).decryptData(
+                return CipherWrapper(SecureStorage.mContext.get()!!).decryptData(
                     dataInfo.cipherText,
                     dataInfo.keyClazz
                 )

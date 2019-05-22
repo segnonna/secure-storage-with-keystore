@@ -94,7 +94,6 @@ To read secured data,
         Timber.e("date: ${SecureStorage.getValue<Date>("date")}")
         Timber.e("weight: ${SecureStorage.getValue<Double>("weight")}")
         Timber.e("list: ${SecureStorage.getValue<MutableList<String>>("list")?.first()}")
-}
 
 ```
 

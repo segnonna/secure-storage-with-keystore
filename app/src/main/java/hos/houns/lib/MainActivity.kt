@@ -11,6 +11,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        SecureStorage.init(this)
 
         SecureStorage.setValue("name", "Hospice HOUNSOU")
         SecureStorage.setValue("age", 50)
@@ -24,8 +25,7 @@ class MainActivity : AppCompatActivity() {
         Timber.e("weight: ${SecureStorage.getValue<Double>("weight")}")
         Timber.e("list: ${SecureStorage.getValue<MutableList<String>>("list")?.first()}")
 
-
-        SecureStorage.clearAll()
+        Timber.e("clearAll: ${SecureStorage.clearAll()}")
         Timber.e("name: ${SecureStorage.getValue<String>("name")}")
 
 
