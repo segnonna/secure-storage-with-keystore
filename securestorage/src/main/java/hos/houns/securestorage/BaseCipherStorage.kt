@@ -56,12 +56,19 @@ internal abstract class BaseCipherStorage(val context: Context, val storage: Sto
     }
 
     override fun removeAll(): Boolean {
-
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-
+        return storage.removeAll()
     }
 
     companion object {
+        private const val AES_TAG_PREFIX = "aes!"
+        private const val TYPE_TAG_PREFIX = "type!"
+        fun makeAesTagForAlias(alias: String): String {
+            return AES_TAG_PREFIX + alias
+        }
+
+        fun makeTypeTagForAlias(alias: String): String {
+            return TYPE_TAG_PREFIX + alias
+        }
         const val ANDROID_KEY_STORE = "AndroidKeyStore"
         val keyStoreAndLoad: KeyStore
             get() {

@@ -22,6 +22,8 @@ class CipherPreferencesStorage @JvmOverloads constructor(
     private val context: Context,
     private val preferenceName: String = SHARED_PREFERENCES_NAME
 ) : Storage {
+
+
     override fun saveString(alias: String, content: String) {
         context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
             .edit()
@@ -56,6 +58,12 @@ class CipherPreferencesStorage @JvmOverloads constructor(
             .apply()
     }
 
+    override fun removeAll(): Boolean {
+        return context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
+            .edit()
+            .clear().commit()
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -82,6 +90,6 @@ class CipherPreferencesStorage @JvmOverloads constructor(
     }
 
     companion object {
-        private val SHARED_PREFERENCES_NAME = CipherPreferencesStorage::class.java.name + "_security_storage"
+        private val SHARED_PREFERENCES_NAME = CipherPreferencesStorage::class.java.name + "_secure_storage"
     }
 }

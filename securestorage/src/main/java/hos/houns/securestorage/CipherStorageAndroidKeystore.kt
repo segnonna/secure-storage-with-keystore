@@ -21,6 +21,7 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import hos.houns.securestorage.SecureStorage.gsonParser
+import hos.houns.securestorage.SecureStorage.secureStorageSerializer
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -53,6 +54,12 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
 
             storage.saveKeyBytes(alias, encryptedData)
 
+            storage.saveString(
+                makeTypeTagForAlias(
+                    alias
+                ), secureStorageSerializer.getType(value)
+            )
+
         } catch (e: NoSuchAlgorithmException) {
             throw CryptoFailedException("Could not encrypt data", e)
         } catch (e: InvalidAlgorithmParameterException) {
@@ -79,7 +86,7 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
             val key = keyStore.getKey(alias, null)
                 ?: /* Well this should not happen if you do not have a stored byte data, but just in case */
                 return null
-            return decryptBytes(key, storedData)
+            return decryptBytes(alias, key, storedData, storage)
         } catch (e: KeyStoreException) {
             return null
         } catch (e: UnrecoverableKeyException) {
@@ -115,7 +122,12 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
         }
 
         @Throws(CryptoFailedException::class)
-        private fun <T> decryptBytes(key: Key, bytes: ByteArray): T? {
+        private fun <T> decryptBytes(
+            alias: String,
+            key: Key,
+            bytes: ByteArray,
+            storage: Storage
+        ): T? {
             try {
                 val cipher = Cipher.getInstance(ENCRYPTION_TRANSFORMATION)
                 val inputStream = ByteArrayInputStream(bytes)
@@ -139,7 +151,13 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
                     String(
                         output.toByteArray(),
                         DEFAULT_CHARSET
-                    ), String::class.java
+                    ), secureStorageSerializer.getClassType(
+                        storage.getString(
+                            makeTypeTagForAlias(
+                                alias
+                            )
+                        )!!
+                    )
                 )
 
             } catch (e: IOException) {

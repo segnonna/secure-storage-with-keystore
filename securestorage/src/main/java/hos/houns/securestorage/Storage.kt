@@ -46,4 +46,6 @@ interface Storage {
      * @param alias the unique alias to check
      */
     fun remove(alias: String)
+
+    fun removeAll(): Boolean
 }

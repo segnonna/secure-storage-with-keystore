@@ -229,17 +229,8 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
         private const val TRANSFORMATION = "RSA/ECB/PKCS1Padding"
         private const val ENCRYPTION_KEY_SIZE = 128
         private val DEFAULT_CHARSET = Charset.forName("UTF-8")
-        private const val AES_TAG_PREFIX = "aes!"
-        private const val TYPE_TAG_PREFIX = "type!"
         private val KEY_SERIAL_NUMBER = BigInteger.valueOf(1338)
 
-        private fun makeAesTagForAlias(alias: String): String {
-            return AES_TAG_PREFIX + alias
-        }
-
-        private fun makeTypeTagForAlias(alias: String): String {
-            return TYPE_TAG_PREFIX + alias
-        }
 
 
         private fun cipherEncryption(
