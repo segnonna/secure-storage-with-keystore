@@ -13,12 +13,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         SecureStorage.init(this)
 
-        /* SecureStorage.setValue("name", "Hospice HOUNSOU")
-         Timber.e("name: ${SecureStorage.getValue<String>("name")}")
+        SecureStorage.setValue("name", "Hospice HOUNSOU")
          SecureStorage.setValue("age", 50)
          SecureStorage.setValue("date", Date())
          SecureStorage.setValue("weight", 70.0)
-         SecureStorage.setValue("list", mutableListOf("One", "Two", "Three"))*/
+        SecureStorage.setValue("list", mutableListOf("One", "Two", "Three"))
         Timber.e("name: ${SecureStorage.getValue<String>("name")}")
         Timber.e("age: ${SecureStorage.getValue<Int>("age")}")
         Timber.e("date: ${SecureStorage.getValue<Date>("date")}")

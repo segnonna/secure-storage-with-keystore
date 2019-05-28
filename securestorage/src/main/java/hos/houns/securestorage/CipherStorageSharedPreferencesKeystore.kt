@@ -41,6 +41,7 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
 
         val entry =
             getKeyStoreEntry(true, alias) ?: throw CryptoFailedException("Unable to generate key for alias $alias")
+
         val key = entry as KeyStore.PrivateKeyEntry
         val encryptedData = encryptData(alias, value, key.certificate.publicKey)
 
@@ -166,6 +167,7 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
             val keyStore = keyStoreAndLoad
 
             var entry: KeyStore.Entry? = keyStore.getEntry(alias, null)
+
             if (entry == null) {
                 if (shouldGenerateKey) {
                     generateKeyRsa(alias)
@@ -227,7 +229,7 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
         private const val KEY_ALGORITHM_RSA = "RSA"
         private const val KEY_ALGORITHM_AES = "AES"
         private const val TRANSFORMATION = "RSA/ECB/PKCS1Padding"
-        private const val ENCRYPTION_KEY_SIZE = 128
+        private const val ENCRYPTION_KEY_SIZE = 256
         private val DEFAULT_CHARSET = Charset.forName("UTF-8")
         private val KEY_SERIAL_NUMBER = BigInteger.valueOf(1338)
 
