@@ -8,111 +8,16 @@ package hos.houns.securestorage.utils
 
 class SecureStorageSerializer : Serializer {
 
-    override fun <T> serialize(cipherText: String, value: T): String {
-
-        var keyClassName = ""
-        var valueClassName = ""
-        val dataType: Char
-
-        if (Generic<MutableList<Any>>().checkType(value!!)) {
-
-            val list = value as MutableList<*>
-            keyClassName = list.javaClass.name
-            dataType = DataInfo.TYPE_LIST
-
-        } else if (Generic<Map<Any, Any>>().checkType(value)) {
-            dataType = DataInfo.TYPE_MAP
-            val map = value as Map<*, *>
-            if (map.isNotEmpty()) {
-                for ((key, value) in map) {
-
-                    keyClassName = key?.javaClass?.name!!
-                    valueClassName = value?.javaClass?.name!!
-                    break
-                }
-            }
-        } else if (Generic<Set<Any>>().checkType(value)) {
-            val set = value as Set<*>
-            if (set.isNotEmpty()) {
-                val iterator = set.iterator()
-                if (iterator.hasNext()) {
-                    keyClassName = iterator.next()?.javaClass?.name!!
-                }
-            }
-            dataType = DataInfo.TYPE_SET
-        } else {
-            dataType = DataInfo.TYPE_OBJECT
-
-            keyClassName = (value as Any).javaClass.name
-        }
-
-        return keyClassName + INFO_DELIMITER +
-                valueClassName + INFO_DELIMITER +
-                dataType + NEW_VERSION + DELIMITER +
-                cipherText
+    override fun getClassType(value: String): Class<*> {
+        return Class.forName(value)
     }
 
-    override fun deserialize(plainText: String): DataInfo {
-        val infos = plainText.split(INFO_DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
-        infos.forEach {
-            // Timber.e("infos -> $it")
+    override fun <T> getType(value: T): String {
+        return when {
+            Generic<MutableList<Any>>().checkType(value!!) -> (value as MutableList<*>).javaClass.name
+            else -> (value as Any).javaClass.name
         }
 
-        val type = infos[2][0]
-
-        // Timber.e("type -> $type")
-
-        // if it is collection, no need to create the class object
-        var keyClazz: Class<*>? = null
-        val firstElement = infos.first()
-        if (firstElement.isNotEmpty()) {
-            try {
-                keyClazz = Class.forName(firstElement)
-            } catch (e: ClassNotFoundException) {
-                //Timber.e("HawkSerializer -> ${e.message}")
-            }
-
-        }
-
-        var valueClazz: Class<*>? = null
-        val secondElement = infos.first()
-        // Timber.e("infos.first() -> ${infos.first()}")
-        // Timber.e("infos[2] -> ${infos[2]}")
-        //  Timber.e("infos.last() -> ${infos.last()}")
-        if (secondElement.isNotEmpty()) {
-            try {
-                valueClazz = Class.forName(secondElement)
-            } catch (e: ClassNotFoundException) {
-                //     Timber.e("HawkSerializer -> ${e.message}")
-            }
-        }
-
-        val cipherText = getCipherText(infos[infos.size - 1])
-        //Timber.e("type : $type")
-        //Timber.e("cipherText : $cipherText")
-        //Timber.e("keyClazz : ${keyClazz!!}")
-        //Timber.e("valueClazz : ${valueClazz!!}")
-
-        return DataInfo(
-                type,
-                cipherText,
-                keyClazz!!,
-                valueClazz!!)
-    }
-
-    private fun getCipherText(serializedText: String): String {
-        val index = serializedText.indexOf(DELIMITER)
-        if (index == -1) {
-            throw IllegalArgumentException("Text should contain delimiter")
-        }
-        return serializedText.substring(index + 1)
-    }
-
-    companion object {
-        private val DELIMITER = '@'
-        private val INFO_DELIMITER = "#"
-        private val NEW_VERSION = 'V'
     }
 
     class Generic<T : Any>(private val klass: Class<T>) {

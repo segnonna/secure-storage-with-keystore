@@ -6,18 +6,6 @@ package hos.houns.securestorage.utils
  */
 
 interface Serializer {
-
-    /**
-     * Serialize the cipher text along with the given data type
-     *
-     * @return serialized string
-     */
-    fun <T> serialize(cipherText: String, value: T): String
-
-    /**
-     * Deserialize the given text according to given DataInfo
-     *
-     * @return original object
-     */
-    fun deserialize(plainText: String): DataInfo
+    fun <T> getType(value: T): String
+    fun getClassType(value: String): Class<*>
 }

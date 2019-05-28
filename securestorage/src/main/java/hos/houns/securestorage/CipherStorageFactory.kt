@@ -1,0 +1,61 @@
+/*
+ * Copyright 2018 Leonardo Rossetto
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package hos.houns.securestorage
+
+import android.content.Context
+import android.os.Build
+
+/**
+ * Factory class for [CipherStorage] it'll decide what
+ * is the best implementation based on the current api level
+ *
+ * @see .newInstance
+ */
+class CipherStorageFactory private constructor() {
+    init {
+        throw AssertionError()
+    }
+
+    companion object {
+
+        /**
+         * Create a new instance of the [CipherStorage] based on the
+         * current api level, on API 22 and bellow it will use the [CipherStorageAndroidKeystore]
+         * and on api 23 and above it will use the [CipherStorageSharedPreferencesKeystore]
+         *
+         * @param context used for api 22 and bellow to access the keystore and
+         * access the Android Shared preferences, on api 23 and above
+         * it's only used for Android Shared Preferences access
+         *
+         * @param storage abstraction for store the key and value bytes into the system
+         * you can implement your own version of the storage to fit your needs
+         * @return a new [CipherStorage] based on the current api level
+         */
+        @JvmOverloads
+        fun newInstance(
+            context: Context, storage: Storage = CipherPreferencesStorage(
+                context
+            )
+        ): CipherStorage {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                CipherStorageAndroidKeystore(context, storage)
+            } else CipherStorageSharedPreferencesKeystore(context, storage)
+        }
+    }
+}
+/**
+ * @see .newInstance
+ */
