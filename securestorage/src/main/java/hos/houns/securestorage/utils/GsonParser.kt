@@ -16,7 +16,7 @@ import java.lang.reflect.Type
 class GsonParser(private val gson: Gson) : Parser {
 
     @Throws(JsonSyntaxException::class)
-    override fun <T> fromJson(content: String?, type: Type?): T? {
+    override fun <T> fromJson(content: String?, type: Type): T? {
         return if (TextUtils.isEmpty(content)) {
             null
         } else gson.fromJson<T>(content, type)

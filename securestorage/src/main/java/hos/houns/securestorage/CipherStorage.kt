@@ -20,40 +20,30 @@ package hos.houns.securestorage
  */
 interface CipherStorage {
     /**
-     * Encrypt the value associating with this alias
-     * the alias it's the only way to access the value,
-     * note if you already have the value stored this alias it will
-     * override the current value
-     *
      * @param alias the key for the value
      * @param value the value to store
      */
     fun <T> encrypt(alias: String, value: T)
 
     /**
-     * Decrypt the value previously associated with this alias
-     *
      * @param alias the key for access this value
      * @return null if no value has founded for this alias or the decrypted value
      */
     fun <T> decrypt(alias: String): T?
 
     /**
-     * Check if there is an value for this alias stored,
-     * including a check into the keystore and the Android Shared Preferences
-     *
      * @param alias the key for access this value
      * @return true if there is a value associated with this key
      */
     fun containsAlias(alias: String): Boolean
 
     /**
-     * Remove the current value previously associated with this key
-     * it'll remove the value from the KeyStore and from the Android Shared Preferences
-     *
      * @param alias the key for access this value
      */
     fun removeKey(alias: String)
 
+    /**
+     * @return true if success
+     */
     fun removeAll(): Boolean
 }
