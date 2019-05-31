@@ -72,6 +72,8 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
             throw CryptoFailedException("Could not access Keystore", e)
         } catch (e: KeyStoreAccessException) {
             throw CryptoFailedException("Could not access Keystore", e)
+        } catch (e: BadPaddingException) {
+            throw CryptoFailedException("Could not access Keystore", e)
         }
 
     }
@@ -170,6 +172,8 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
                 throw CryptoFailedException("Could not decrypt bytes", e)
             } catch (e: InvalidAlgorithmParameterException) {
                 throw CryptoFailedException("Could not decrypt bytes", e)
+            } catch (e: BadPaddingException) {
+                throw CryptoFailedException("Could not access Keystore", e)
             }
         }
 
@@ -203,8 +207,9 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
                 throw CryptoFailedException("Could not encrypt value", e)
             } catch (e: NoSuchPaddingException) {
                 throw CryptoFailedException("Could not encrypt value", e)
+            } catch (e: BadPaddingException) {
+                throw CryptoFailedException("Could not access Keystore", e)
             }
-
         }
     }
 }
