@@ -31,24 +31,9 @@ class CipherStorageFactory private constructor() {
 
     companion object {
 
-        /**
-         * Create a new instance of the [CipherStorage] based on the
-         * current api level, on API 22 and bellow it will use the [CipherStorageAndroidKeystore]
-         * and on api 23 and above it will use the [CipherStorageSharedPreferencesKeystore]
-         *
-         * @param context used for api 22 and bellow to access the keystore and
-         * access the Android Shared preferences, on api 23 and above
-         * it's only used for Android Shared Preferences access
-         *
-         * @param storage abstraction for store the key and value bytes into the system
-         * you can implement your own version of the storage to fit your needs
-         * @return a new [CipherStorage] based on the current api level
-         */
         @JvmOverloads
         fun newInstance(
-            context: Context, storage: Storage = CipherPreferencesStorage(
-                context
-            )
+            context: Context, storage: Storage = CipherPreferencesStorage(context)
         ): CipherStorage {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 CipherStorageAndroidKeystore(context, storage)
