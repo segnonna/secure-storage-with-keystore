@@ -22,7 +22,6 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import hos.houns.securestorage.SecureStorage.gsonParser
 import hos.houns.securestorage.SecureStorage.secureStorageSerializer
-import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -44,7 +43,7 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
             val keyStore = keyStoreAndLoad
 
             if (!keyStore.containsAlias(alias)) {
-                Timber.e("keystore does not exist")
+                //Timber.e("keystore does not exist")
                 val generator = KeyGenerator.getInstance(
                     ENCRYPTION_ALGORITHM,
                     ANDROID_KEY_STORE
@@ -54,11 +53,10 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
             } else {
                 val aliases = keyStore.aliases().toList().filter { it == alias }
                 if (aliases.isEmpty()) {
-                    Timber.e("keystore  exist")
+                    // Timber.e("keystore  exist")
                 } else {
-                    Timber.e("keystore   ${aliases.first()}  exist")
+                    //Timber.e("keystore   ${aliases.first()}  exist")
                 }
-
 
             }
             val key = keyStore.getKey(alias, null)
