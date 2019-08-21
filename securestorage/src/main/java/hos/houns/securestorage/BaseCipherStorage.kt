@@ -66,7 +66,9 @@ internal abstract class BaseCipherStorage(val context: Context, val storage: Sto
                 } catch (e: CertificateException) {
                     throw KeyStoreAccessException("Could not access Keystore", e)
                 } catch (e: KeyStoreException) {
+                    e.printStackTrace()
                     throw KeyStoreAccessException("Could not access Keystore", e)
+
                 } catch (e: IOException) {
                     throw KeyStoreAccessException("Could not access Keystore", e)
                 }

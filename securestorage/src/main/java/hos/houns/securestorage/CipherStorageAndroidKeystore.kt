@@ -32,7 +32,8 @@ import javax.crypto.*
 import javax.crypto.spec.IvParameterSpec
 
 @TargetApi(Build.VERSION_CODES.M)
-internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) : BaseCipherStorage(context, storage) {
+internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) :
+    BaseCipherStorage(context, storage) {
 
 
     /**
@@ -159,17 +160,13 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
                     output.write(buffer, 0, n)
                 }
 
+
                 return gsonParser.fromJson(
                     String(
                         output.toByteArray(),
                         DEFAULT_CHARSET
-                    ), secureStorageSerializer.getClassType(
-                        storage.getString(
-                            makeTypeTagForAlias(
-                                alias
-                            )
-                        )!!
-                    )
+                    ),
+                    secureStorageSerializer.getClassType(storage.getString(makeTypeTagForAlias(alias))!!)
                 )
 
             } catch (e: IOException) {

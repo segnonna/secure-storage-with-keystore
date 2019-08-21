@@ -10,14 +10,14 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 18
+        multiDexEnabled true
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
 
     buildTypes {
         release {
@@ -25,11 +25,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
 
+    packagingOptions {
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/LICENSE-notice.md'
+    }
 }
 
 dependencies {
@@ -46,11 +52,30 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     implementation 'com.google.truth:truth:0.45'
-    implementation 'org.mockito:mockito-core:2.28.2'
+    implementation 'org.mockito:mockito-core:3.0.0'
     implementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'
     testImplementation 'junit:junit:4.12'
     implementation "androidx.arch.core:core-testing:2.0.1"
     testImplementation 'org.koin:koin-test:2.0.1'
+    implementation 'com.android.support:multidex:1.0.3'
+
+
+
+    androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.5.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.5.0"
+    androidTestImplementation "org.junit.jupiter:junit-jupiter-params:5.5.0"
+
+
+    androidTestImplementation "androidx.test:runner:1.2.0"
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.ext:truth:1.2.0'
+    androidTestImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'
+
+    testImplementation "org.powermock:powermock-module-junit4:1.7.4"
+    testImplementation "org.powermock:powermock-api-mockito2:1.7.4"
 }
 repositories {
     mavenCentral()

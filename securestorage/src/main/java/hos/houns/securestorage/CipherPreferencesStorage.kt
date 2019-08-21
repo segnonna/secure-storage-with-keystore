@@ -9,11 +9,11 @@ class CipherPreferencesStorage @JvmOverloads constructor(
 ) : Storage {
 
 
-    override fun saveString(alias: String, content: String) {
-        context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
+    override fun saveString(alias: String, content: String): Boolean {
+        return context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
             .edit()
             .putString(alias, content)
-            .apply()
+            .commit()
     }
 
     override fun getString(alias: String): String? {
@@ -21,11 +21,11 @@ class CipherPreferencesStorage @JvmOverloads constructor(
             .getString(alias, null)
     }
 
-    private fun saveKeyString(alias: String, value: String) {
-        context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
+    private fun saveKeyString(alias: String, value: String): Boolean {
+        return context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
             .edit()
             .putString(alias, value)
-            .apply()
+            .commit()
     }
 
     private fun getKeyString(alias: String): String? {
@@ -36,11 +36,11 @@ class CipherPreferencesStorage @JvmOverloads constructor(
     /**
      * {@inheritDoc}
      */
-    override fun remove(alias: String) {
-        context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
+    override fun remove(alias: String): Boolean {
+        return context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
             .edit()
             .remove(alias)
-            .apply()
+            .commit()
     }
 
     override fun removeAll(): Boolean {
@@ -70,8 +70,8 @@ class CipherPreferencesStorage @JvmOverloads constructor(
     /**
      * {@inheritDoc}
      */
-    override fun saveKeyBytes(alias: String, content: ByteArray) {
-        saveKeyString(alias, Base64.encodeToString(content, Base64.DEFAULT))
+    override fun saveKeyBytes(alias: String, content: ByteArray): Boolean {
+        return saveKeyString(alias, Base64.encodeToString(content, Base64.DEFAULT))
     }
 
     companion object {

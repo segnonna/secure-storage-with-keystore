@@ -21,9 +21,9 @@ interface Storage {
      * @param alias something unique to retrieve the value from the system
      * @param content the actual content of the key (encrypted)
      */
-    fun saveKeyBytes(alias: String, content: ByteArray)
+    fun saveKeyBytes(alias: String, content: ByteArray): Boolean
 
-    fun saveString(alias: String, content: String)
+    fun saveString(alias: String, content: String): Boolean
 
     /**
      * Return the current encrypted value of the current alias
@@ -45,7 +45,7 @@ interface Storage {
      * Remove the current value associated with this alias
      * @param alias the unique alias to check
      */
-    fun remove(alias: String)
+    fun remove(alias: String): Boolean
 
     fun removeAll(): Boolean
 }

@@ -11,10 +11,10 @@ import hos.houns.securestorage.utils.SecureStorageSerializer
  */
 
 object SecureStorage {
-    lateinit var cipherStorage: CipherStorage
+    private var cipherStorage: CipherStorage? = null
     private val gson: Gson by lazy(LazyThreadSafetyMode.NONE) { Gson() }
-    val gsonParser: GsonParser by lazy(LazyThreadSafetyMode.NONE) { GsonParser(gson) }
-    val secureStorageSerializer: SecureStorageSerializer by lazy(LazyThreadSafetyMode.NONE) { SecureStorageSerializer() }
+    internal val gsonParser: GsonParser by lazy(LazyThreadSafetyMode.NONE) { GsonParser(gson) }
+    internal val secureStorageSerializer: SecureStorageSerializer by lazy(LazyThreadSafetyMode.NONE) { SecureStorageSerializer() }
 
     fun init(context: Context? = null) {
         context?.let {
@@ -25,15 +25,19 @@ object SecureStorage {
     }
 
     fun <T> setValue(alias: String, secret: T) {
-        cipherStorage.encrypt(alias, secret)
+        try {
+            cipherStorage?.encrypt(alias, secret)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun <T> getValue(alias: String): T? {
-        return cipherStorage.decrypt<T>(alias)
+        return cipherStorage?.decrypt<T>(alias)
     }
 
-    fun clearAll(): Boolean {
-        return cipherStorage.removeAll()
+    fun clearAll(): Boolean? {
+        return cipherStorage?.removeAll()
     }
 
 }
