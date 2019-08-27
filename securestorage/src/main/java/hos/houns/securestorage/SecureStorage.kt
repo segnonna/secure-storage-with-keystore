@@ -33,11 +33,20 @@ object SecureStorage {
     }
 
     fun <T> getValue(alias: String): T? {
-        return cipherStorage?.decrypt<T>(alias)
+        return try {
+            cipherStorage?.decrypt<T>(alias) ?: null
+        } catch (e: Exception) {
+            null
+        }
     }
 
     fun clearAll(): Boolean? {
-        return cipherStorage?.removeAll()
+        return try {
+            cipherStorage?.removeAll()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 
 }

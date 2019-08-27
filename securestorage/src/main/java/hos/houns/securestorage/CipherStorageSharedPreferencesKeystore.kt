@@ -165,8 +165,10 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
     private fun getKeyStoreEntry(shouldGenerateKey: Boolean, alias: String): KeyStore.Entry? {
         try {
             val keyStore = keyStoreAndLoad
+
             keyStore.deleteEntry(alias)
             var entry: KeyStore.Entry? = keyStore.getEntry(alias, null)
+            //var entry: KeyStore.Entry? = null
 
             if (entry == null) {
                 if (shouldGenerateKey) {

@@ -30,7 +30,6 @@ class CipherStorageFactory private constructor() {
     }
 
     companion object {
-
         @JvmOverloads
         fun newInstance(
             context: Context, storage: Storage = CipherPreferencesStorage(context)
@@ -41,6 +40,3 @@ class CipherStorageFactory private constructor() {
         }
     }
 }
-/**
- * @see .newInstance
- */

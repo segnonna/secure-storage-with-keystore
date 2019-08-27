@@ -20,17 +20,17 @@ class MainActivity : AppCompatActivity() {
         SecureStorage.setValue("date", Date())
         SecureStorage.setValue("weight", 70.0)
         SecureStorage.setValue("list", mutableListOf("One", "Two", "Three"))
-
         Timber.e("name: ${SecureStorage.getValue<String>("name")}")
         Timber.e("name: ${SecureStorage.getValue<String>("name")}")
         Timber.e("age: ${SecureStorage.getValue<Int>("age")}")
+
+        Timber.e("nameee: ${SecureStorage.setValue("nameee", null)}")
         Timber.e("date: ${SecureStorage.getValue<Date>("date")}")
         Timber.e("weight: ${SecureStorage.getValue<Double>("weight")}")
         Timber.e("list: ${SecureStorage.getValue<MutableList<String>>("list")?.first()}")
-
         SecureStorage.clearAll()
         Timber.e("name: ${SecureStorage.getValue<String>("name")}")
-        Timber.e("name: ${SecureStorage.setValue("name", null)}")
+
 
         // Timber.e("clearAll: ${SecureStorage.clearAll()}")
         // Timber.e("name: ${SecureStorage.getValue<String>("name")}")

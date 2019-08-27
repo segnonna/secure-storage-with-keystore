@@ -85,6 +85,8 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
             throw CryptoFailedException("Could not access Keystore", e)
         } catch (e: BadPaddingException) {
             throw CryptoFailedException("Could not access Keystore", e)
+        } catch (e: NullPointerException) {
+            throw CryptoFailedException("Could not access Keystore", e)
         }
 
     }
@@ -107,6 +109,12 @@ internal class CipherStorageAndroidKeystore(context: Context, storage: Storage) 
         } catch (e: NoSuchAlgorithmException) {
             return null
         } catch (e: KeyStoreAccessException) {
+            return null
+        } catch (e: CryptoFailedException) {
+            e.printStackTrace()
+            return null
+        } catch (e: KotlinNullPointerException) {
+            e.printStackTrace()
             return null
         }
 
