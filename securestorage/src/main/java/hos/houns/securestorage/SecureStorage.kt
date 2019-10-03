@@ -34,7 +34,7 @@ object SecureStorage {
 
     fun <T> getValue(alias: String): T? {
         return try {
-            cipherStorage?.decrypt<T>(alias) ?: null
+            cipherStorage?.decrypt<T>(alias)
         } catch (e: Exception) {
             null
         }

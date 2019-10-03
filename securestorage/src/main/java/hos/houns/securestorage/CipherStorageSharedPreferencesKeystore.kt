@@ -38,7 +38,7 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
      * {@inheritDoc}
      */
     override fun <T> encrypt(alias: String, value: T) {
-
+        // Timber.e(" encrypt alias: $alias")
         val entry =
             getKeyStoreEntry(true, alias) ?: throw CryptoFailedException("Unable to generate key for alias $alias")
 
@@ -52,7 +52,9 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
      * {@inheritDoc}
      */
     override fun <T> decrypt(alias: String): T? {
+        //Timber.e(" decrypt alias: $alias")
         val entry = getKeyStoreEntry(false, alias) ?: return null
+
         val key = entry as KeyStore.PrivateKeyEntry
         return decryptData(alias, key.privateKey)
     }
@@ -62,9 +64,7 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
      */
     override fun containsAlias(alias: String): Boolean {
         return super.containsAlias(alias) && storage.containsAlias(
-            makeAesTagForAlias(
-                alias
-            )
+            makeAesTagForAlias(alias)
         )
     }
 
@@ -77,12 +77,11 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
     }
 
     private fun <T> decryptData(alias: String, privateKey: PrivateKey): T? {
+        // Timber.e(" decryptData alias: $alias")
         val encryptedData = storage.getKeyBytes(alias)
-        val secretData = storage.getKeyBytes(
-            makeAesTagForAlias(
-                alias
-            )
-        )
+        // Timber.e("encryptedData: ${encryptedData?.size}")
+        val secretData = storage.getKeyBytes(makeAesTagForAlias(alias))
+
         if (encryptedData == null || secretData == null) {
             return null
         }
@@ -130,12 +129,10 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
         )
     }
 
-    private fun generateKeyRsa(alias: String) {
+    private fun generateKeyPair(alias: String) {
         try {
-            val keyPairGenerator = KeyPairGenerator.getInstance(
-                KEY_ALGORITHM_RSA,
-                ANDROID_KEY_STORE
-            )
+            val keyPairGenerator =
+                KeyPairGenerator.getInstance(KEY_ALGORITHM_RSA, ANDROID_KEY_STORE)
             keyPairGenerator.initialize(getParameterSpec(alias))
             keyPairGenerator.generateKeyPair()
         } catch (e: NoSuchAlgorithmException) {
@@ -163,17 +160,15 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
     }
 
     private fun getKeyStoreEntry(shouldGenerateKey: Boolean, alias: String): KeyStore.Entry? {
+        //Timber.e("getKeyStoreEntry")
         try {
-            val keyStore = keyStoreAndLoad
 
-            keyStore.deleteEntry(alias)
-            var entry: KeyStore.Entry? = keyStore.getEntry(alias, null)
-            //var entry: KeyStore.Entry? = null
-
-            if (entry == null) {
+            //keyStoreAndLoad.deleteEntry(alias)
+            var entry: KeyStore.Entry? = keyStoreAndLoad.getEntry(alias, null)
+            entry?.let {
                 if (shouldGenerateKey) {
-                    generateKeyRsa(alias)
-                    entry = keyStore.getEntry(alias, null)
+                    generateKeyPair(alias)
+                    entry = keyStoreAndLoad.getEntry(alias, null)
                 }
             }
             return entry
@@ -184,10 +179,11 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
         } catch (e: UnrecoverableEntryException) {
             throw KeyStoreAccessException("Unable to access keystore", e)
         }
-
     }
 
     private fun <T> encryptData(alias: String, value: T, publicKey: PublicKey): ByteArray {
+
+        //Timber.e(" encrypt alias: $alias")
         val secret = generateKeyAes(alias)
         val rsaEncrypted = cipherEncryption(
             TRANSFORMATION,
@@ -195,18 +191,13 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
             publicKey,
             secret.encoded
         )
-        storage.saveKeyBytes(
-            makeAesTagForAlias(
-                alias
-            ), rsaEncrypted
-        )
-        storage.saveString(
-            makeTypeTagForAlias(
-                alias
-            ), secureStorageSerializer.getType(value)
-        )
-
+        // Timber.e(makeTypeTagForAlias(alias))
         //Timber.e( storage.getString(makeTypeTagForAlias(alias)))
+        storage.saveKeyBytes(makeAesTagForAlias(alias), rsaEncrypted)
+        //Timber.e(secureStorageSerializer.getType(value))
+        storage.saveString(makeTypeTagForAlias(alias), secureStorageSerializer.getType(value))
+
+
 
         return cipherEncryption(
             KEY_ALGORITHM_AES,

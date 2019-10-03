@@ -1,12 +1,8 @@
 package hos.houns.securestorage
 
 import android.content.Context
-
-import java.io.IOException
 import java.security.KeyStore
 import java.security.KeyStoreException
-import java.security.NoSuchAlgorithmException
-import java.security.cert.CertificateException
 
 internal abstract class BaseCipherStorage(val context: Context, val storage: Storage) :
     CipherStorage {
@@ -16,8 +12,7 @@ internal abstract class BaseCipherStorage(val context: Context, val storage: Sto
      */
     override fun containsAlias(alias: String): Boolean {
         try {
-            val keyStore = keyStoreAndLoad
-            return keyStore.containsAlias(alias) && storage.containsAlias(alias)
+            return keyStoreAndLoad.containsAlias(alias) && storage.containsAlias(alias)
         } catch (e: KeyStoreException) {
             throw KeyStoreAccessException("Failed to access Keystore", e)
         }
@@ -30,8 +25,7 @@ internal abstract class BaseCipherStorage(val context: Context, val storage: Sto
     override fun removeKey(alias: String) {
         try {
             if (containsAlias(alias)) {
-                val keyStore = keyStoreAndLoad
-                keyStore.deleteEntry(alias)
+                keyStoreAndLoad.deleteEntry(alias)
                 storage.remove(alias)
             }
         } catch (e: KeyStoreException) {
@@ -55,24 +49,10 @@ internal abstract class BaseCipherStorage(val context: Context, val storage: Sto
             return TYPE_TAG_PREFIX + alias
         }
         const val ANDROID_KEY_STORE = "AndroidKeyStore"
-        val keyStoreAndLoad: KeyStore
-            get() {
-                try {
-                    val keyStore = KeyStore.getInstance(ANDROID_KEY_STORE)
-                    keyStore.load(null)
-                    return keyStore
-                } catch (e: NoSuchAlgorithmException) {
-                    throw KeyStoreAccessException("Could not access Keystore", e)
-                } catch (e: CertificateException) {
-                    throw KeyStoreAccessException("Could not access Keystore", e)
-                } catch (e: KeyStoreException) {
-                    e.printStackTrace()
-                    throw KeyStoreAccessException("Could not access Keystore", e)
 
-                } catch (e: IOException) {
-                    throw KeyStoreAccessException("Could not access Keystore", e)
-                }
+        val keyStoreAndLoad: KeyStore = KeyStore.getInstance(ANDROID_KEY_STORE).apply {
+            load(null)
+        }
 
-            }
     }
 }
