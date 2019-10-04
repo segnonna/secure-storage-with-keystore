@@ -8,7 +8,7 @@ import com.orhanobut.hawk.Hawk
  * Created by hospicehounsou on 03,October,2019
  * Dakar, Senegal.
  */
-internal class StorageSharedPreferencesPreJellyBean(context: Context, var storage: Storage) :
+internal class StorageSharedPreferencesPreJellyBean(context: Context) :
     CipherStorage {
 
     init {

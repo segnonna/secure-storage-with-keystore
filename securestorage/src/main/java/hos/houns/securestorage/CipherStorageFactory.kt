@@ -28,7 +28,6 @@ class CipherStorageFactory private constructor() {
     init {
         throw AssertionError()
     }
-
     companion object {
         @JvmOverloads
         fun newInstance(
@@ -40,12 +39,9 @@ class CipherStorageFactory private constructor() {
             } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M &&
                 Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2
             )
-                CipherStorageSharedPreferencesKeystore(
-                    context,
-                    storage
-                )
+                CipherStorageSharedPreferencesKeystore(context, storage)
             else {
-                StorageSharedPreferencesPreJellyBean(context, storage)
+                StorageSharedPreferencesPreJellyBean(context)
             }
         }
     }

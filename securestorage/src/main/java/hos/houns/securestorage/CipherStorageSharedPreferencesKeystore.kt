@@ -38,7 +38,7 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
      * {@inheritDoc}
      */
     override fun <T> encrypt(alias: String, value: T) {
-        // Timber.e(" encrypt alias: $alias")
+        //Timber.e(" encrypt alias: $alias")
         val entry =
             getKeyStoreEntry(true, alias) ?: throw CryptoFailedException("Unable to generate key for alias $alias")
 
@@ -135,6 +135,7 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
                 KeyPairGenerator.getInstance(KEY_ALGORITHM_RSA, ANDROID_KEY_STORE)
             keyPairGenerator.initialize(getParameterSpec(alias))
             keyPairGenerator.generateKeyPair()
+
         } catch (e: NoSuchAlgorithmException) {
             throw KeyStoreAccessException("Unable to access keystore", e)
         } catch (e: NoSuchProviderException) {
@@ -162,15 +163,15 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
     private fun getKeyStoreEntry(shouldGenerateKey: Boolean, alias: String): KeyStore.Entry? {
         //Timber.e("getKeyStoreEntry")
         try {
-
             //keyStoreAndLoad.deleteEntry(alias)
             var entry: KeyStore.Entry? = keyStoreAndLoad.getEntry(alias, null)
-            entry?.let {
+            if (entry == null) {
                 if (shouldGenerateKey) {
                     generateKeyPair(alias)
                     entry = keyStoreAndLoad.getEntry(alias, null)
                 }
             }
+
             return entry
         } catch (e: KeyStoreException) {
             throw KeyStoreAccessException("Unable to access keystore", e)
@@ -183,7 +184,7 @@ internal class CipherStorageSharedPreferencesKeystore(context: Context, storage:
 
     private fun <T> encryptData(alias: String, value: T, publicKey: PublicKey): ByteArray {
 
-        //Timber.e(" encrypt alias: $alias")
+        //  Timber.e(" encrypt alias: $alias")
         val secret = generateKeyAes(alias)
         val rsaEncrypted = cipherEncryption(
             TRANSFORMATION,
