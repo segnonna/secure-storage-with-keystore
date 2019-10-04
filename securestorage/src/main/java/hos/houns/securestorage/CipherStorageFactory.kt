@@ -32,11 +32,21 @@ class CipherStorageFactory private constructor() {
     companion object {
         @JvmOverloads
         fun newInstance(
-            context: Context, storage: Storage = CipherPreferencesStorage(context)
+            context: Context,
+            storage: Storage = CipherPreferencesStorage(context)
         ): CipherStorage {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 CipherStorageAndroidKeystore(context, storage)
-            } else CipherStorageSharedPreferencesKeystore(context, storage)
+            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M &&
+                Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2
+            )
+                CipherStorageSharedPreferencesKeystore(
+                    context,
+                    storage
+                )
+            else {
+                StorageSharedPreferencesPreJellyBean(context, storage)
+            }
         }
     }
 }
